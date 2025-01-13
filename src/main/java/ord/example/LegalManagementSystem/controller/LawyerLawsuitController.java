@@ -1,7 +1,9 @@
 package ord.example.LegalManagementSystem.controller;
 
-import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCUDTO;
+import jakarta.validation.Valid;
+import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO;
+import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitUpdateDTO;
 import ord.example.LegalManagementSystem.service.LawyerLawsuitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,8 @@ public class LawyerLawsuitController {
     }
 
     @PostMapping
-    public ResponseEntity<LawyerLawsuitReadDTO> createLawyerLawsuit(@RequestBody LawyerLawsuitCUDTO lawyerLawsuitCUDTO) {
-        LawyerLawsuitReadDTO savedLawyerLawsuit = lawyerLawsuitService.createLawyerLawsuit(lawyerLawsuitCUDTO);
+    public ResponseEntity<LawyerLawsuitReadDTO> createLawyerLawsuit(@Valid @RequestBody LawyerLawsuitCreateDTO lawyerLawsuitCreateDTO) {
+        LawyerLawsuitReadDTO savedLawyerLawsuit = lawyerLawsuitService.createLawyerLawsuit(lawyerLawsuitCreateDTO);
         return new ResponseEntity<>(savedLawyerLawsuit, HttpStatus.CREATED);
     }
 
@@ -40,8 +42,8 @@ public class LawyerLawsuitController {
     }
 
     @PutMapping("/{lawyerLawsuitId}")
-    public ResponseEntity<LawyerLawsuitReadDTO> updateLawyerLawsuit(@PathVariable Integer lawyerLawsuitId, @RequestBody LawyerLawsuitCUDTO lawyerLawsuitCUDTO) {
-        Optional<LawyerLawsuitReadDTO> updatedLawyerLawsuit = lawyerLawsuitService.updateLawyerLawsuitById(lawyerLawsuitId, lawyerLawsuitCUDTO);
+    public ResponseEntity<LawyerLawsuitReadDTO> updateLawyerLawsuit(@PathVariable Integer lawyerLawsuitId, @Valid @RequestBody LawyerLawsuitUpdateDTO lawyerLawsuitUpdateDTO) {
+        Optional<LawyerLawsuitReadDTO> updatedLawyerLawsuit = lawyerLawsuitService.updateLawyerLawsuitById(lawyerLawsuitId, lawyerLawsuitUpdateDTO);
         return updatedLawyerLawsuit.map(lc -> new ResponseEntity<>(lc, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

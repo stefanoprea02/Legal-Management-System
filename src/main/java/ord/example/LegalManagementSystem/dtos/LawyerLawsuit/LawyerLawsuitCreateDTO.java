@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LawyerLawsuitCUDTO {
+public class LawyerLawsuitCreateDTO {
     @NotNull
     Integer lawyerId;
 

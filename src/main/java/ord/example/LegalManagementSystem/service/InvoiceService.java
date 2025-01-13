@@ -1,7 +1,8 @@
 package ord.example.LegalManagementSystem.service;
 
-import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceCUDTO;
+import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceReadDTO;
+import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.ClientNotFoundException;
 import ord.example.LegalManagementSystem.mappers.GlobalMapper;
 import ord.example.LegalManagementSystem.model.Invoice;
@@ -28,13 +29,13 @@ public class InvoiceService {
     }
 
     @Transactional
-    public InvoiceReadDTO saveInvoice(InvoiceCUDTO invoiceCUDTO) {
+    public InvoiceReadDTO saveInvoice(InvoiceCreateDTO invoiceCreateDTO) {
         Invoice invoice = new Invoice();
-        invoice.setDueDate(invoiceCUDTO.getDueDate());
-        invoice.setAmount(invoice.getAmount());
+        invoice.setDueDate(invoiceCreateDTO.getDueDate());
+        invoice.setAmount(invoiceCreateDTO.getAmount());
 
-        Client client = clientRepository.findById(invoiceCUDTO.getClientId())
-                .orElseThrow(() -> new ClientNotFoundException("Client with ID " + invoiceCUDTO.getClientId() + " not found"));
+        Client client = clientRepository.findById(invoiceCreateDTO.getClientId())
+                .orElseThrow(() -> new ClientNotFoundException("Client with ID " + invoiceCreateDTO.getClientId() + " not found"));
 
         invoice.setClient(client);
 
@@ -51,10 +52,10 @@ public class InvoiceService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<InvoiceReadDTO> updateInvoiceById(Integer invoiceId, InvoiceCUDTO invoiceCUDTO) {
+    public Optional<InvoiceReadDTO> updateInvoiceById(Integer invoiceId, InvoiceUpdateDTO invoiceUpdateDTO) {
         return invoiceRepository.findById(invoiceId).map(existingInvoice -> {
-            existingInvoice.setAmount(invoiceCUDTO.getAmount());
-            existingInvoice.setDueDate(invoiceCUDTO.getDueDate());
+            existingInvoice.setAmount(invoiceUpdateDTO.getAmount());
+            existingInvoice.setDueDate(invoiceUpdateDTO.getDueDate());
 
             return globalMapper.toInvoiceReadDto(invoiceRepository.save(existingInvoice), true);
         });

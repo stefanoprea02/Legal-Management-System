@@ -1,5 +1,6 @@
 package ord.example.LegalManagementSystem.controller;
 
+import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Lawyer.LawyerCUDTO;
 import ord.example.LegalManagementSystem.dtos.Lawyer.LawyerReadDTO;
 import ord.example.LegalManagementSystem.service.LawyerService;
@@ -21,7 +22,7 @@ public class LawyerController {
     }
 
     @PostMapping
-    public ResponseEntity<LawyerReadDTO> createLawyer(@RequestBody LawyerCUDTO lawyerCUDTO) {
+    public ResponseEntity<LawyerReadDTO> createLawyer(@Valid @RequestBody LawyerCUDTO lawyerCUDTO) {
         LawyerReadDTO savedLawyer = lawyerService.saveLawyer(lawyerCUDTO);
         return new ResponseEntity<>(savedLawyer, HttpStatus.CREATED);
     }
@@ -40,7 +41,7 @@ public class LawyerController {
     }
 
     @PutMapping("/{lawyerId}")
-    public ResponseEntity<LawyerReadDTO> updateLawyer(@PathVariable Integer lawyerId, @RequestBody LawyerCUDTO lawyerCUDTO) {
+    public ResponseEntity<LawyerReadDTO> updateLawyer(@PathVariable Integer lawyerId, @Valid @RequestBody LawyerCUDTO lawyerCUDTO) {
         Optional<LawyerReadDTO> updatedLawyer = lawyerService.updateLawyerById(lawyerId, lawyerCUDTO);
         return updatedLawyer.map(l -> new ResponseEntity<>(l, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

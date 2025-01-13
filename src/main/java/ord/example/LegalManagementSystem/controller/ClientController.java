@@ -1,8 +1,8 @@
 package ord.example.LegalManagementSystem.controller;
 
+import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Client.ClientCUDTO;
 import ord.example.LegalManagementSystem.dtos.Client.ClientReadDTO;
-import ord.example.LegalManagementSystem.model.Client;
 import ord.example.LegalManagementSystem.service.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientReadDTO> createClient(@RequestBody ClientCUDTO clientCUDTO) {
+    public ResponseEntity<ClientReadDTO> createClient(@Valid @RequestBody ClientCUDTO clientCUDTO) {
         ClientReadDTO savedClient = clientService.saveClient(clientCUDTO);
         return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
     }
@@ -40,7 +40,7 @@ public class ClientController {
     }
 
     @PutMapping("/{clientId}")
-    public ResponseEntity<ClientReadDTO> updateClient(@PathVariable Integer clientId, @RequestBody ClientCUDTO clientCUDTO) {
+    public ResponseEntity<ClientReadDTO> updateClient(@PathVariable Integer clientId, @Valid @RequestBody ClientCUDTO clientCUDTO) {
         Optional<ClientReadDTO> updatedClient = clientService.updateClientById(clientId, clientCUDTO);
         return updatedClient.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

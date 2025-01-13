@@ -1,8 +1,9 @@
 package ord.example.LegalManagementSystem.controller;
 
-import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceCUDTO;
+import jakarta.validation.Valid;
+import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceReadDTO;
-import ord.example.LegalManagementSystem.model.Invoice;
+import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceUpdateDTO;
 import ord.example.LegalManagementSystem.service.InvoiceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public ResponseEntity<InvoiceReadDTO> createInvoice(@RequestBody InvoiceCUDTO invoiceCUDTO) {
-        InvoiceReadDTO savedInvoice = invoiceService.saveInvoice(invoiceCUDTO);
+    public ResponseEntity<InvoiceReadDTO> createInvoice(@RequestBody @Valid InvoiceCreateDTO invoiceCreateDTO) {
+        InvoiceReadDTO savedInvoice = invoiceService.saveInvoice(invoiceCreateDTO);
         return new ResponseEntity<>(savedInvoice, HttpStatus.CREATED);
     }
 
@@ -41,8 +42,8 @@ public class InvoiceController {
     }
 
     @PutMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceReadDTO> updateInvoice(@PathVariable Integer invoiceId, @RequestBody InvoiceCUDTO invoiceCUDTO) {
-        Optional<InvoiceReadDTO> updatedInvoice = invoiceService.updateInvoiceById(invoiceId, invoiceCUDTO);
+    public ResponseEntity<InvoiceReadDTO> updateInvoice(@PathVariable Integer invoiceId, @Valid @RequestBody InvoiceUpdateDTO invoiceUpdateDTO) {
+        Optional<InvoiceReadDTO> updatedInvoice = invoiceService.updateInvoiceById(invoiceId, invoiceUpdateDTO);
         return updatedInvoice.map(i -> new ResponseEntity<>(i, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

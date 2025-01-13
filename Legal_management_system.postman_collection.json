@@ -1,0 +1,822 @@
+{
+	"info": {
+		"_postman_id": "d923e33b-2ff4-4d62-b2f4-76957f89ae06",
+		"name": "Spring",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20985328"
+	},
+	"item": [
+		{
+			"name": "Client",
+			"item": [
+				{
+					"name": "READ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/clients",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/clients/:clientId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								":clientId"
+							],
+							"variable": [
+								{
+									"key": "clientId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Jane2\",\r\n  \"lastName\": \"Doe\",\r\n  \"clientAddress\": \"456 Client St, Business City, State, 67890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/clients",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Jane33\",\r\n  \"lastName\": \"Doee\",\r\n  \"clientAddress\": \"456 Client St, Business City, State, 67890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/clients/:clientId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								":clientId"
+							],
+							"variable": [
+								{
+									"key": "clientId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/clients/:clientId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								":clientId"
+							],
+							"variable": [
+								{
+									"key": "clientId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hearing",
+			"item": [
+				{
+					"name": "READ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/hearings",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/hearings/:hearingId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearings",
+								":hearingId"
+							],
+							"variable": [
+								{
+									"key": "hearingId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"lawsuitId\": 3,\r\n  \"dateTime\": \"2025-01-15T14:30:00.000Z\",\r\n  \"appointmentAddress\": \"123 Court St, Suite 456, City, Country\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/hearings",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"dateTime\": \"2025-01-15T14:30:00.000Z\",\r\n  \"appointmentAddress\": \"$123 Court St, Suite 456, City, Country\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/hearings/:hearingId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearings",
+								":hearingId"
+							],
+							"variable": [
+								{
+									"key": "hearingId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/hearings/:hearingId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"hearings",
+								":hearingId"
+							],
+							"variable": [
+								{
+									"key": "hearingId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Invoice",
+			"item": [
+				{
+					"name": "READ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/invoices",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/invoices/:invoiceId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								":invoiceId"
+							],
+							"variable": [
+								{
+									"key": "invoiceId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": 1,\r\n  \"amount\": 500,\r\n  \"dueDate\": \"2025-01-15T10:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/invoices",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"amount\": 1500,\r\n  \"dueDate\": \"2025-01-15T10:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/invoices/:invoiceId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								":invoiceId"
+							],
+							"variable": [
+								{
+									"key": "invoiceId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/invoices/:invoiceId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"invoices",
+								":invoiceId"
+							],
+							"variable": [
+								{
+									"key": "invoiceId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lawsuit",
+			"item": [
+				{
+					"name": "READ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawsuits",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawsuits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawsuits/:lawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawsuits",
+								":lawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawsuitId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": 1,\r\n  \"reason\": \"Breach of Contract 2\",\r\n  \"opposingParty\": \"ABC Corporation\",\r\n  \"lawyerIds\": [1]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawsuits",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawsuits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"reason\": \"Breach of Contract 3\",\r\n  \"opposingParty\": \"ABC Corporation\",\r\n  \"lawyerIds\": [2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawsuits/:lawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawsuits",
+								":lawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawsuitId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawsuits/:lawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawsuits",
+								":lawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawsuitId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LawyerLawsuit",
+			"item": [
+				{
+					"name": "READ BY LAWSUIT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyer-lawsuits/lawsuit/:lawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyer-lawsuits",
+								"lawsuit",
+								":lawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawsuitId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyer-lawsuits/:lawyerLawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyer-lawsuits",
+								":lawyerLawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawyerLawsuitId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"lawyerId\": 2,\r\n  \"lawsuitId\": 2,\r\n  \"hoursWorked\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawyer-lawsuits",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyer-lawsuits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"hoursWorked\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawyer-lawsuits/:lawyerLawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyer-lawsuits",
+								":lawyerLawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawyerLawsuitId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyer-lawsuits/:lawyerLawsuitId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyer-lawsuits",
+								":lawyerLawsuitId"
+							],
+							"variable": [
+								{
+									"key": "lawyerLawsuitId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lawyer",
+			"item": [
+				{
+					"name": "READ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "READ BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyers/:lawyerId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyers",
+								":lawyerId"
+							],
+							"variable": [
+								{
+									"key": "lawyerId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Mary\",\r\n  \"lastName\": \"Jane321321\",\r\n  \"hireDate\": \"2025-07-23\",\r\n  \"lawyerType\": \"Corporate\",\r\n  \"hourlyRate\": 150,\r\n  \"commission\": 0.2,\r\n  \"lawyerAddress\": \"Somewhere\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawyers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Mary\",\r\n  \"lastName\": \"Jane\",\r\n  \"hireDate\": \"2025-07-23\",\r\n  \"lawyerType\": \"Corporate\",\r\n  \"hourlyRate\": 150,\r\n  \"commission\": 0.3,\r\n  \"lawyerAddress\": \"Somewhere\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lawyers/:lawyerId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyers",
+								":lawyerId"
+							],
+							"variable": [
+								{
+									"key": "lawyerId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lawyers/:lawyerId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lawyers",
+								":lawyerId"
+							],
+							"variable": [
+								{
+									"key": "lawyerId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

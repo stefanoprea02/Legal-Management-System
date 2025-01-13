@@ -1,5 +1,6 @@
 package ord.example.LegalManagementSystem.controller;
 
+import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitUpdateDTO;
@@ -20,7 +21,7 @@ public class LawsuitController {
     }
 
     @PostMapping
-    public ResponseEntity<LawsuitReadDTO> createLawsuit(@RequestBody LawsuitCreateDTO lawsuitCreateDTO) {
+    public ResponseEntity<LawsuitReadDTO> createLawsuit(@Valid @RequestBody LawsuitCreateDTO lawsuitCreateDTO) {
         LawsuitReadDTO savedlawsuit = lawsuitService.saveLawsuite(lawsuitCreateDTO);
         return new ResponseEntity<>(savedlawsuit, HttpStatus.CREATED);
     }
@@ -39,7 +40,7 @@ public class LawsuitController {
     }
 
     @PutMapping("/{lawsuitId}")
-    public ResponseEntity<LawsuitReadDTO> updateLawsuit(@PathVariable Integer lawsuitId, @RequestBody LawsuitUpdateDTO lawsuitUpdateDTO) {
+    public ResponseEntity<LawsuitReadDTO> updateLawsuit(@PathVariable Integer lawsuitId, @Valid @RequestBody LawsuitUpdateDTO lawsuitUpdateDTO) {
         Optional<LawsuitReadDTO> updatedLawsuitOptional = lawsuitService.updateLawsuitById(lawsuitId, lawsuitUpdateDTO);
         return updatedLawsuitOptional.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

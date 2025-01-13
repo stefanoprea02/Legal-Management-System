@@ -9,7 +9,7 @@ import java.sql.Date;
 
 @Getter
 @Setter
-public class InvoiceCUDTO {
+public class InvoiceCreateDTO {
     @NotNull
     private Integer clientId;
 

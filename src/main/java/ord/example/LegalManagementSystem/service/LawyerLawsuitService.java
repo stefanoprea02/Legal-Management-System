@@ -1,7 +1,8 @@
 package ord.example.LegalManagementSystem.service;
 
-import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCUDTO;
+import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO;
+import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
 import ord.example.LegalManagementSystem.exceptions.LawyerNotFoundException;
 import ord.example.LegalManagementSystem.mappers.GlobalMapper;
@@ -34,17 +35,17 @@ public class LawyerLawsuitService {
     }
 
     @Transactional
-    public LawyerLawsuitReadDTO createLawyerLawsuit(LawyerLawsuitCUDTO lawyerLawsuitCUDTO) {
-        Lawyer lawyer = lawyerRepository.findById(lawyerLawsuitCUDTO.getLawyerId())
-                .orElseThrow(() -> new LawyerNotFoundException("Lawyer not found for ID: " + lawyerLawsuitCUDTO.getLawyerId()));
+    public LawyerLawsuitReadDTO createLawyerLawsuit(LawyerLawsuitCreateDTO lawyerLawsuitCreateDTO) {
+        Lawyer lawyer = lawyerRepository.findById(lawyerLawsuitCreateDTO.getLawyerId())
+                .orElseThrow(() -> new LawyerNotFoundException("Lawyer not found for ID: " + lawyerLawsuitCreateDTO.getLawyerId()));
 
-        Lawsuit lawsuitEntity = lawsuitRepository.findById(lawyerLawsuitCUDTO.getLawsuitId())
-                .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit not found for ID: " + lawyerLawsuitCUDTO.getLawsuitId()));
+        Lawsuit lawsuitEntity = lawsuitRepository.findById(lawyerLawsuitCreateDTO.getLawsuitId())
+                .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit not found for ID: " + lawyerLawsuitCreateDTO.getLawsuitId()));
 
         LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
         lawyerLawsuit.setLawyer(lawyer);
         lawyerLawsuit.setLawsuitEntity(lawsuitEntity);
-        lawyerLawsuit.setHoursWorked(lawyerLawsuitCUDTO.getHoursWorked());
+        lawyerLawsuit.setHoursWorked(lawyerLawsuitCreateDTO.getHoursWorked());
 
         return globalMapper.toLawyerLawsuitReadDto(lawyerLawsuitRepository.save(lawyerLawsuit), true, true);
     }
@@ -53,9 +54,9 @@ public class LawyerLawsuitService {
         return lawyerLawsuitRepository.findById(lawyerLawsuitId).map(l -> globalMapper.toLawyerLawsuitReadDto(l, true, true));
     }
 
-    public Optional<LawyerLawsuitReadDTO> updateLawyerLawsuitById(int lawyerLawsuitId, LawyerLawsuitCUDTO lawyerLawsuitCUDTO) {
+    public Optional<LawyerLawsuitReadDTO> updateLawyerLawsuitById(int lawyerLawsuitId, LawyerLawsuitUpdateDTO lawsuitUpdateDTO) {
         return lawyerLawsuitRepository.findById(lawyerLawsuitId).map(existingLawyerLawsuit -> {
-            existingLawyerLawsuit.setHoursWorked(lawyerLawsuitCUDTO.getHoursWorked());
+            existingLawyerLawsuit.setHoursWorked(lawsuitUpdateDTO.getHoursWorked());
 
             return globalMapper.toLawyerLawsuitReadDto(lawyerLawsuitRepository.save(existingLawyerLawsuit), true, true);
         });
