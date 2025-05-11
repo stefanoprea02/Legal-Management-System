@@ -10,7 +10,5 @@ import java.util.List;
 
 @Repository
 public interface LawyerLawsuitRepository extends JpaRepository<LawyerLawsuit, Integer> {
-    List<LawyerLawsuit> findByLawsuitEntity(Lawsuit existingLawsuit);
-
-    List<LawyerLawsuit> findByLawyer(Lawyer existingLawyer);
+    List<LawyerLawsuit> findByLawsuit(Lawsuit existingLawsuit);
 }

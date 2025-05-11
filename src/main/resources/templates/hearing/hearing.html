@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Hearing Details</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Hearing Details</h1>
+
+    <h3 class="mb-3">Hearing Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td th:text="${hearing.hearingId}"></td>
+        </tr>
+        <tr>
+            <th>Date & Time</th>
+            <td th:text="${#dates.format(hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td th:text="${hearing.appointmentAddress}"></td>
+        </tr>
+        <tr>
+            <th>Lawsuit ID</th>
+            <td>
+                <span th:text="${hearing.lawsuit.lawsuitId}"></span>
+                <a th:href="@{'/lawsuits/' + ${hearing.lawsuit.lawsuitId}}" class="btn btn-info btn-sm ml-2">View Lawsuit</a>
+            </td>
+        </tr>
+    </table>
+
+    <a th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning mt-3">Edit Hearing</a>
+</main>
+</body>
+</html>

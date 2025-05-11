@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Clients</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Invoices</th>
+            <th>Lawsuits</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="client : ${clients}">
+            <td th:text="${client.clientId}"></td>
+            <td th:text="${client.firstName + ' ' + client.lastName}"></td>
+            <td th:text="${client.clientAddress}"></td>
+            <td th:text="${#lists.size(client.invoices)}"></td>
+            <td th:text="${#lists.size(client.lawsuits)}"></td>
+            <td>
+                <a th:href="@{'/clients/' + ${client.clientId}}" class="btn btn-primary btn-sm">View</a>
+                <a th:href="@{'/clients/edit/' + ${client.clientId}}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{'/clients/delete/' + ${client.clientId}}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{'/clients/create'}" class="btn btn-success">Add New Client</a>
+</main>
+</body>
+</html>

@@ -35,14 +35,14 @@ public class HearingService {
         hearing.setDateTime(hearingCreateDTO.getDateTime());
         hearing.setAppointmentAddress(hearingCreateDTO.getAppointmentAddress());
 
-        Lawsuit lawsuitEntity = lawsuitRepository.findById(hearingCreateDTO.getLawsuitId())
+        Lawsuit lawsuit = lawsuitRepository.findById(hearingCreateDTO.getLawsuitId())
                 .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit with ID " + hearingCreateDTO.getLawsuitId() + " not found"));
 
-        if (lawsuitEntity.getHearing() != null) {
-            throw new LawsuitHasHearingException("Lawsuit with ID " + lawsuitEntity.getLawsuitId() + " has a hearing.");
+        if (lawsuit.getHearing() != null) {
+            throw new LawsuitHasHearingException("Lawsuit with ID " + lawsuit.getLawsuitId() + " has a hearing.");
         }
 
-        hearing.setLawsuitEntity(lawsuitEntity);
+        hearing.setLawsuit(lawsuit);
 
         return globalMapper.toHearingReadDto(hearingRepository.save(hearing), true);
     }
@@ -71,7 +71,7 @@ public class HearingService {
         Optional<Hearing> hearing = hearingRepository.findById(hearingId);
 
         if(hearing.isPresent()) {
-            Lawsuit lawsuit = hearing.get().getLawsuitEntity();
+            Lawsuit lawsuit = hearing.get().getLawsuit();
             lawsuit.setHearing(null);
             lawsuitRepository.save(lawsuit);
 

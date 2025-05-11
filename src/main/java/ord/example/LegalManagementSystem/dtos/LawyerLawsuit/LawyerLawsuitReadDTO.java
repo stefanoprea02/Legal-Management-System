@@ -11,5 +11,5 @@ public class LawyerLawsuitReadDTO {
     private Integer id;
     private Integer hoursWorked;
     private LawyerReadDTO lawyer;
-    private LawsuitReadDTO lawsuitEntity;
+    private LawsuitReadDTO lawsuit;
 }

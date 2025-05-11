@@ -44,11 +44,11 @@ public class LawyerService {
 
         if (lawyerCUDTO.getLawsuitIds() != null) {
             for (Integer lawsuitId : lawyerCUDTO.getLawsuitIds()) {
-                Lawsuit lawsuitEntity = lawsuitRepository.findById(lawsuitId)
+                Lawsuit lawsuit = lawsuitRepository.findById(lawsuitId)
                         .orElseThrow(() -> new LawsuitNotFoundException("Lawyer with ID " + lawsuitId + " not found."));
 
                 LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
-                lawyerLawsuit.setLawsuitEntity(lawsuitEntity);
+                lawyerLawsuit.setLawsuit(lawsuit);
                 lawyerLawsuit.setLawyer(savedLawyer);
                 lawyerLawsuit.setHoursWorked(0);
 
@@ -86,19 +86,19 @@ public class LawyerService {
 
             List<LawyerLawsuit> existingLawyerLawsuits = existingLawyer.getLawyerLawsuits();
 
-            existingLawyerLawsuits.removeIf(lawyerLawsuit -> !newLawsuitIds.contains(lawyerLawsuit.getLawsuitEntity().getLawsuitId()));
+            existingLawyerLawsuits.removeIf(lawyerLawsuit -> !newLawsuitIds.contains(lawyerLawsuit.getLawsuit().getLawsuitId()));
 
             Set<Integer> existingLawsuitIds = existingLawyerLawsuits.stream()
-                    .map(lawyerLawsuit -> lawyerLawsuit.getLawsuitEntity().getLawsuitId())
+                    .map(lawyerLawsuit -> lawyerLawsuit.getLawsuit().getLawsuitId())
                     .collect(Collectors.toSet());
 
             for (Integer lawsuitId : newLawsuitIds) {
                 if (!existingLawsuitIds.contains(lawsuitId)) {
-                    Lawsuit lawsuitEntity = lawsuitRepository.findById(lawsuitId)
+                    Lawsuit lawsuit = lawsuitRepository.findById(lawsuitId)
                             .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit not found for ID: " + lawsuitId));
 
                     LawyerLawsuit newLawyerLawsuit = new LawyerLawsuit();
-                    newLawyerLawsuit.setLawsuitEntity(lawsuitEntity);
+                    newLawyerLawsuit.setLawsuit(lawsuit);
                     newLawyerLawsuit.setLawyer(existingLawyer);
                     newLawyerLawsuit.setHoursWorked(0);
 

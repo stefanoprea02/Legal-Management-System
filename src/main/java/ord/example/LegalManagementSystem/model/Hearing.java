@@ -1,6 +1,5 @@
 package ord.example.LegalManagementSystem.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,7 +19,7 @@ public class Hearing {
 
     @OneToOne
     @JoinColumn(name = "lawsuit_id", nullable = false)
-    private Lawsuit lawsuitEntity;
+    private Lawsuit lawsuit;
 
     @NotNull
     private Timestamp dateTime;

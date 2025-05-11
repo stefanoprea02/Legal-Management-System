@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawyer-Lawsuit Assignment Details</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Assignment Details</h1>
+
+    <h3 class="mb-3">Assignment Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td th:text="${lawyerLawsuit.id}"></td>
+        </tr>
+        <tr>
+            <th>Hours Worked</th>
+            <td th:text="${lawyerLawsuit.hoursWorked}"></td>
+        </tr>
+    </table>
+
+    <h3 class="mb-3">Lawyer Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>Lawyer ID</th>
+            <td th:text="${lawyerLawsuit.lawyer.lawyerId}"></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td th:text="${lawyerLawsuit.lawyer.firstName + ' ' + lawyerLawsuit.lawyer.lastName}"></td>
+        </tr>
+        <tr>
+            <th>Type</th>
+            <td th:text="${lawyerLawsuit.lawyer.lawyerType}"></td>
+        </tr>
+        <tr>
+            <th>Hire Date</th>
+            <td th:text="${#dates.format(lawyerLawsuit.lawyer.hireDate, 'yyyy-MM-dd')}"></td>
+        </tr>
+        <tr>
+            <th>Hourly Rate</th>
+            <td th:text="${lawyerLawsuit.lawyer.hourlyRate}"></td>
+        </tr>
+        <tr>
+            <th>Commission</th>
+            <td th:text="${lawyerLawsuit.lawyer.commission}"></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td th:text="${lawyerLawsuit.lawyer.lawyerAddress}"></td>
+        </tr>
+    </table>
+
+    <h3 class="mb-3">Lawsuit Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>Lawsuit ID</th>
+            <td th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></td>
+        </tr>
+        <tr>
+            <th>Reason</th>
+            <td th:text="${lawyerLawsuit.lawsuit.reason}"></td>
+        </tr>
+        <tr>
+            <th>Opposing Party</th>
+            <td th:text="${lawyerLawsuit.lawsuit.opposingParty}"></td>
+        </tr>
+        <tr>
+            <th>Client</th>
+            <td th:text="${lawyerLawsuit.lawsuit.client.firstName + ' ' + lawyerLawsuit.lawsuit.client.lastName}"></td>
+        </tr>
+        <tr>
+            <th>Hearing Date</th>
+            <td th:text="${#dates.format(lawyerLawsuit.lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        <tr>
+            <th>Hearing Address</th>
+            <td th:text="${lawyerLawsuit.lawsuit.hearing.appointmentAddress}"></td>
+        </tr>
+    </table>
+
+    <a th:href="@{'/lawyer-lawsuits/edit/' + ${lawyerLawsuit.id}}" class="btn btn-warning mt-3">Edit Assignment</a>
+</main>
+</body>
+</html>

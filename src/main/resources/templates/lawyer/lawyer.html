@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawyer Details</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Lawyer Details</h1>
+
+    <h3 class="mb-3">Lawyer Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td th:text="${lawyer.lawyerId}"></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td th:text="${lawyer.firstName + ' ' + lawyer.lastName}"></td>
+        </tr>
+        <tr>
+            <th>Hire Date</th>
+            <td th:text="${#dates.format(lawyer.hireDate, 'yyyy-MM-dd')}"></td>
+        </tr>
+        <tr>
+            <th>Type</th>
+            <td th:text="${lawyer.lawyerType}"></td>
+        </tr>
+        <tr>
+            <th>Hourly Rate</th>
+            <td th:text="${lawyer.hourlyRate}"></td>
+        </tr>
+        <tr>
+            <th>Commission</th>
+            <td th:text="${lawyer.commission}"></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td th:text="${lawyer.lawyerAddress}"></td>
+        </tr>
+    </table>
+
+    <h3 class="mb-3">Assigned Lawsuits</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Lawsuit ID</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="lawyerLawsuit : ${lawyer.lawyerLawsuits}">
+            <td th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></td>
+            <td>
+                <a th:href="@{'/lawsuits/' + ${lawyerLawsuit.lawsuit.lawsuitId}}" class="btn btn-info btn-sm">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{'/lawyers/edit/' + ${lawyer.lawyerId}}" class="btn btn-warning mt-3">Edit Lawyer</a>
+</main>
+</body>
+</html>

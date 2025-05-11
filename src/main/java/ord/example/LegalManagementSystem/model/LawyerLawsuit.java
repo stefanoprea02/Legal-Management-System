@@ -1,9 +1,7 @@
 package ord.example.LegalManagementSystem.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,5 +23,5 @@ public class LawyerLawsuit {
 
     @ManyToOne
     @JoinColumn(name = "lawsuit_id", nullable = false)
-    private Lawsuit lawsuitEntity;
+    private Lawsuit lawsuit;
 }

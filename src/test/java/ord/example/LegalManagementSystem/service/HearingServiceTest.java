@@ -51,7 +51,7 @@ public class HearingServiceTest {
         Hearing hearing = new Hearing();
         hearing.setDateTime(Timestamp.valueOf("2025-01-01 10:00:00"));
         hearing.setAppointmentAddress("123 Main Street");
-        hearing.setLawsuitEntity(lawsuit);
+        hearing.setLawsuit(lawsuit);
 
         HearingReadDTO hearingReadDTO = new HearingReadDTO();
         hearingReadDTO.setDateTime(Timestamp.valueOf("2025-01-01 10:00:00"));
@@ -89,7 +89,7 @@ public class HearingServiceTest {
         hearingCreateDTO.setAppointmentAddress("123 Main Street");
 
         Hearing existingHearing = new Hearing();
-        existingHearing.setLawsuitEntity(new Lawsuit());
+        existingHearing.setLawsuit(new Lawsuit());
         Lawsuit lawsuit = new Lawsuit();
         lawsuit.setLawsuitId(1);
         lawsuit.setHearing(existingHearing);
@@ -133,7 +133,7 @@ public class HearingServiceTest {
     public void testDeleteHearingById_Success() {
         Hearing hearing = new Hearing();
         Lawsuit lawsuit = new Lawsuit();
-        hearing.setLawsuitEntity(lawsuit);
+        hearing.setLawsuit(lawsuit);
         lawsuit.setLawsuitId(1);
 
         when(hearingRepository.findById(1)).thenReturn(Optional.of(hearing));

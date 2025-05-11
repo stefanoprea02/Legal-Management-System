@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Details</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Client Details</h1>
+
+    <h3 class="mb-3">Client Information</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td th:text="${client.clientId}"></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td th:text="${client.firstName + ' ' + client.lastName}"></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td th:text="${client.clientAddress}"></td>
+        </tr>
+    </table>
+
+    <h3 class="mb-3">Invoices</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Invoice ID</th>
+            <th>Amount</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice : ${client.invoices}">
+            <td th:text="${invoice.invoiceId}"></td>
+            <td th:text="${invoice.amount}"></td>
+            <td th:text="${#dates.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+            <td>
+                <a th:href="@{'/invoices/' + ${invoice.invoiceId}}" class="btn btn-info btn-sm">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3 class="mb-3">Lawsuits</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Lawsuit ID</th>
+            <th>Reason</th>
+            <th>Opposing Party</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="lawsuit : ${client.lawsuits}">
+            <td th:text="${lawsuit.lawsuitId}"></td>
+            <td th:text="${lawsuit.reason}"></td>
+            <td th:text="${lawsuit.opposingParty}"></td>
+            <td>
+                <a th:href="@{'/lawsuits/' + ${lawsuit.lawsuitId}}" class="btn btn-info btn-sm">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{'/clients/edit/' + ${client.clientId}}" class="btn btn-warning mt-3">Edit Client</a>
+</main>
+</body>
+</html>

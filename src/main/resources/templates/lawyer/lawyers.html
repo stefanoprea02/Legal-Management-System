@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawyers</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Lawyers</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Hourly Rate</th>
+            <th>Commission</th>
+            <th>Lawsuits</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="lawyer : ${lawyers}">
+            <td th:text="${lawyer.lawyerId}"></td>
+            <td th:text="${lawyer.firstName + ' ' + lawyer.lastName}"></td>
+            <td th:text="${lawyer.lawyerType}"></td>
+            <td th:text="${lawyer.hourlyRate}"></td>
+            <td th:text="${lawyer.commission}"></td>
+            <td th:text="${#lists.size(lawyer.lawyerLawsuits)}"></td>
+            <td>
+                <a th:href="@{'/lawyers/' + ${lawyer.lawyerId}}" class="btn btn-primary btn-sm">View</a>
+                <a th:href="@{'/lawyers/edit/' + ${lawyer.lawyerId}}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{'/lawyers/delete/' + ${lawyer.lawyerId}}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{'/lawyers/create'}" class="btn btn-success">Add New Lawyer</a>
+</main>
+</body>
+</html>

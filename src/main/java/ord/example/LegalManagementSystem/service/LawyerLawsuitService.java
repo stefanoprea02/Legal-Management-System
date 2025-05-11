@@ -39,12 +39,12 @@ public class LawyerLawsuitService {
         Lawyer lawyer = lawyerRepository.findById(lawyerLawsuitCreateDTO.getLawyerId())
                 .orElseThrow(() -> new LawyerNotFoundException("Lawyer not found for ID: " + lawyerLawsuitCreateDTO.getLawyerId()));
 
-        Lawsuit lawsuitEntity = lawsuitRepository.findById(lawyerLawsuitCreateDTO.getLawsuitId())
+        Lawsuit lawsuit = lawsuitRepository.findById(lawyerLawsuitCreateDTO.getLawsuitId())
                 .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit not found for ID: " + lawyerLawsuitCreateDTO.getLawsuitId()));
 
         LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
         lawyerLawsuit.setLawyer(lawyer);
-        lawyerLawsuit.setLawsuitEntity(lawsuitEntity);
+        lawyerLawsuit.setLawsuit(lawsuit);
         lawyerLawsuit.setHoursWorked(lawyerLawsuitCreateDTO.getHoursWorked());
 
         return globalMapper.toLawyerLawsuitReadDto(lawyerLawsuitRepository.save(lawyerLawsuit), true, true);
@@ -52,6 +52,12 @@ public class LawyerLawsuitService {
 
     public Optional<LawyerLawsuitReadDTO> getLawyerLawsuitById(Integer lawyerLawsuitId) {
         return lawyerLawsuitRepository.findById(lawyerLawsuitId).map(l -> globalMapper.toLawyerLawsuitReadDto(l, true, true));
+    }
+
+    public List<LawyerLawsuitReadDTO> getAllLawyerLawsuits() {
+        return lawyerLawsuitRepository.findAll().stream()
+                .map(l -> globalMapper.toLawyerLawsuitReadDto(l, true, true))
+                .collect(Collectors.toList());
     }
 
     public Optional<LawyerLawsuitReadDTO> updateLawyerLawsuitById(int lawyerLawsuitId, LawyerLawsuitUpdateDTO lawsuitUpdateDTO) {
@@ -67,10 +73,10 @@ public class LawyerLawsuitService {
     }
 
     public List<LawyerLawsuitReadDTO> getLawyerLawsuitsByLawsuitId(Integer lawsuitId) {
-        Lawsuit lawsuitEntity = lawsuitRepository.findById(lawsuitId)
+        Lawsuit lawsuit = lawsuitRepository.findById(lawsuitId)
                 .orElseThrow(() -> new LawsuitNotFoundException("Lawsuit not found for ID: " + lawsuitId));
 
-        return lawyerLawsuitRepository.findByLawsuitEntity(lawsuitEntity).stream()
+        return lawyerLawsuitRepository.findByLawsuit(lawsuit).stream()
                 .map(l -> globalMapper.toLawyerLawsuitReadDto(l, true, true))
                 .collect(Collectors.toList());
     }

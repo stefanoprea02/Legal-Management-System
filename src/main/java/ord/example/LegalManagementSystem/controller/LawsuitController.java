@@ -4,14 +4,17 @@ import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitUpdateDTO;
+import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
 import ord.example.LegalManagementSystem.service.LawsuitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/lawsuits")
 public class LawsuitController {
     private final LawsuitService lawsuitService;
@@ -27,16 +30,23 @@ public class LawsuitController {
     }
 
     @GetMapping("/{lawsuitId}")
-    public ResponseEntity<LawsuitReadDTO> getLawsuitById(@PathVariable Integer lawsuitId) {
+    public String getLawsuitById(@PathVariable Integer lawsuitId, Model model) {
         Optional<LawsuitReadDTO> lawsuitOptional = lawsuitService.getLawsuitById(lawsuitId);
-        return lawsuitOptional.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (lawsuitOptional.isEmpty()) {
+            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
+        } else {
+            model.addAttribute("lawsuit", lawsuitOptional.get());
+            return "lawsuit/lawsuit";
+        }
     }
 
     @GetMapping("")
-    public ResponseEntity<List<LawsuitReadDTO>> getLawsuits() {
+    public String getLawsuits(Model model) {
         List<LawsuitReadDTO> lawsuits = lawsuitService.getLawsuits();
-        return new ResponseEntity<>(lawsuits, HttpStatus.OK);
+
+        model.addAttribute("lawsuits", lawsuits);
+        return "lawsuit/lawsuits";
     }
 
     @PutMapping("/{lawsuitId}")

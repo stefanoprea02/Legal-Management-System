@@ -29,10 +29,10 @@ public class Lawsuit {
     @Size(max = 50)
     private String opposingParty;
 
-    @OneToOne(mappedBy = "lawsuitEntity", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "lawsuit", cascade = CascadeType.ALL)
     private Hearing hearing;
 
-    @OneToMany(mappedBy = "lawsuitEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lawsuit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LawyerLawsuit> lawyerLawsuits;
 }
 

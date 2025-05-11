@@ -4,15 +4,18 @@ import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceReadDTO;
 import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceUpdateDTO;
+import ord.example.LegalManagementSystem.exceptions.InvoiceNotFoundException;
 import ord.example.LegalManagementSystem.service.InvoiceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/invoices")
 public class InvoiceController {
 
@@ -29,16 +32,23 @@ public class InvoiceController {
     }
 
     @GetMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceReadDTO> getInvoiceById(@PathVariable Integer invoiceId) {
+    public String getInvoiceById(@PathVariable Integer invoiceId, Model model) {
         Optional<InvoiceReadDTO> invoice = invoiceService.getInvoiceById(invoiceId);
-        return invoice.map(i -> new ResponseEntity<>(i, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (invoice.isEmpty()) {
+           throw new InvoiceNotFoundException("Invoice with ID " + invoiceId + " not found");
+        } else {
+            model.addAttribute("invoice", invoice.get());
+            return "invoice/invoice";
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<InvoiceReadDTO>> getAllInvoices() {
+    public String getAllInvoices(Model model) {
         List<InvoiceReadDTO> invoices = invoiceService.getInvoices();
-        return new ResponseEntity<>(invoices, HttpStatus.OK);
+
+        model.addAttribute("invoices", invoices);
+        return "invoice/invoices";
     }
 
     @PutMapping("/{invoiceId}")

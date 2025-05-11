@@ -4,15 +4,18 @@ import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitUpdateDTO;
+import ord.example.LegalManagementSystem.exceptions.LawyerLawsuitNotFoundException;
 import ord.example.LegalManagementSystem.service.LawyerLawsuitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/lawyer-lawsuits")
 public class LawyerLawsuitController {
 
@@ -29,10 +32,23 @@ public class LawyerLawsuitController {
     }
 
     @GetMapping("/{lawyerLawsuitId}")
-    public ResponseEntity<LawyerLawsuitReadDTO> getLawyerLawsuitById(@PathVariable Integer lawyerLawsuitId) {
+    public String getLawyerLawsuitById(@PathVariable Integer lawyerLawsuitId, Model model) {
         Optional<LawyerLawsuitReadDTO> lawyerLawsuit = lawyerLawsuitService.getLawyerLawsuitById(lawyerLawsuitId);
-        return lawyerLawsuit.map(l -> new ResponseEntity<>(l, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (lawyerLawsuit.isEmpty()) {
+            throw new LawyerLawsuitNotFoundException("LawyerLawsuit with ID " + lawyerLawsuitId + " not found");
+        } else {
+            model.addAttribute("lawyerLawsuit", lawyerLawsuit.get());
+            return "lawyerLawsuit/lawyerLawsuit";
+        }
+    }
+
+    @GetMapping
+    public String getLawyerLawsuits(Model model) {
+        List<LawyerLawsuitReadDTO> lawyerLawsuits = lawyerLawsuitService.getAllLawyerLawsuits();
+
+        model.addAttribute("lawyerLawsuits", lawyerLawsuits);
+        return "lawyerLawsuit/lawyerLawsuits";
     }
 
     @GetMapping("/lawsuit/{lawsuitId}")

@@ -34,7 +34,7 @@ public class GlobalMapper {
 
         if (expandLawsuits && client.getLawsuits() != null) {
             List<LawsuitReadDTO> lawsuitDtos = client.getLawsuits().stream()
-                    .map(lawsuit -> toLawsuitReadDto(lawsuit, false, false))
+                    .map(lawsuit -> toLawsuitReadDto(lawsuit, false, false, false))
                     .collect(Collectors.toList());
             dto.setLawsuits(lawsuitDtos);
         }
@@ -52,9 +52,9 @@ public class GlobalMapper {
         dto.setDateTime(hearing.getDateTime());
         dto.setAppointmentAddress(hearing.getAppointmentAddress());
 
-        if (expandLawsuit && hearing.getLawsuitEntity() != null) {
-            LawsuitReadDTO lawsuitDto = toLawsuitReadDto(hearing.getLawsuitEntity(), false, false);
-            dto.setLawsuitEntity(lawsuitDto);
+        if (expandLawsuit && hearing.getLawsuit() != null) {
+            LawsuitReadDTO lawsuitDto = toLawsuitReadDto(hearing.getLawsuit(), false, false, false);
+            dto.setLawsuit(lawsuitDto);
         }
 
         return dto;
@@ -78,7 +78,7 @@ public class GlobalMapper {
         return dto;
     }
 
-    public LawsuitReadDTO toLawsuitReadDto(Lawsuit lawsuit, boolean expandLawyerLawsuit, boolean expandHearing) {
+    public LawsuitReadDTO toLawsuitReadDto(Lawsuit lawsuit, boolean expandLawyerLawsuit, boolean expandHearing, boolean expandClient) {
         if (lawsuit == null) {
             return null;
         }
@@ -100,6 +100,11 @@ public class GlobalMapper {
             dto.setHearing(hearingReadDTO);
         }
 
+        if (expandClient && lawsuit.getClient() != null) {
+            ClientReadDTO clientReadDTO = toClientReadDto(lawsuit.getClient(), false, false);
+            dto.setClient(clientReadDTO);
+        }
+
         return dto;
     }
 
@@ -116,8 +121,8 @@ public class GlobalMapper {
             dto.setLawyer(toLawyerReadDto(lawyerLawsuit.getLawyer(), false));
         }
 
-        if(expandLawsuit && lawyerLawsuit.getLawsuitEntity() != null) {
-            dto.setLawsuitEntity(toLawsuitReadDto(lawyerLawsuit.getLawsuitEntity(),false, false));
+        if(expandLawsuit && lawyerLawsuit.getLawsuit() != null) {
+            dto.setLawsuit(toLawsuitReadDto(lawyerLawsuit.getLawsuit(),false, true, true));
         }
 
         return dto;

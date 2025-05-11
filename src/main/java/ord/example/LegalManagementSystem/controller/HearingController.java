@@ -4,15 +4,18 @@ import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingReadDTO;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingUpdateDTO;
+import ord.example.LegalManagementSystem.exceptions.HearingNotFoundException;
 import ord.example.LegalManagementSystem.service.HearingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/hearings")
 public class HearingController {
     private final HearingService hearingService;
@@ -28,16 +31,23 @@ public class HearingController {
     }
 
     @GetMapping("/{hearingId}")
-    public ResponseEntity<HearingReadDTO> getHearingById(@PathVariable Integer hearingId) {
+    public String getHearingById(@PathVariable Integer hearingId, Model model) {
         Optional<HearingReadDTO> hearing = hearingService.getHearingById(hearingId);
-        return hearing.map(h -> new ResponseEntity<>(h, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (hearing.isEmpty()) {
+            throw new HearingNotFoundException("Hearing with ID " + hearingId + " not found");
+        } else {
+            model.addAttribute("hearing", hearing.get());
+            return "hearing/hearing";
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<HearingReadDTO>> getAllHearings() {
+    public String getAllHearings(Model model) {
         List<HearingReadDTO> hearings = hearingService.getHearings();
-        return new ResponseEntity<>(hearings, HttpStatus.OK);
+
+        model.addAttribute("hearings", hearings);
+        return "hearing/hearings";
     }
 
     @PutMapping("/{hearingId}")

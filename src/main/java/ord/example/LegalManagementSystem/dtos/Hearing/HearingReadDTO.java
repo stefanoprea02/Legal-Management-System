@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Setter
 public class HearingReadDTO {
     private Integer hearingId;
-    private LawsuitReadDTO lawsuitEntity;
+    private LawsuitReadDTO lawsuit;
     private Timestamp dateTime;
     private String appointmentAddress;
 }

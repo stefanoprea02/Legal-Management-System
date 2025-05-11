@@ -38,16 +38,16 @@ public class LawsuitService {
 
     @Transactional
     public LawsuitReadDTO saveLawsuite(LawsuitCreateDTO lawsuitCreateDTO) {
-        Lawsuit lawsuitEntity = new Lawsuit();
-        lawsuitEntity.setReason(lawsuitCreateDTO.getReason());
-        lawsuitEntity.setOpposingParty(lawsuitCreateDTO.getOpposingParty());
+        Lawsuit lawsuit = new Lawsuit();
+        lawsuit.setReason(lawsuitCreateDTO.getReason());
+        lawsuit.setOpposingParty(lawsuitCreateDTO.getOpposingParty());
 
         Client client = clientRepository.findById(lawsuitCreateDTO.getClientId())
                 .orElseThrow(() -> new ClientNotFoundException("Client with ID " + lawsuitCreateDTO.getClientId() + " not found"));
 
-        lawsuitEntity.setClient(client);
+        lawsuit.setClient(client);
 
-        Lawsuit savedLawsuit = lawsuitRepository.save(lawsuitEntity);
+        Lawsuit savedLawsuit = lawsuitRepository.save(lawsuit);
 
         if (lawsuitCreateDTO.getLawyerIds() != null) {
             for (Integer lawyerId : lawsuitCreateDTO.getLawyerIds()) {
@@ -55,7 +55,7 @@ public class LawsuitService {
                         .orElseThrow(() -> new LawyerNotFoundException("Lawyer with ID " + lawyerId + " not found."));
 
                 LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
-                lawyerLawsuit.setLawsuitEntity(savedLawsuit);
+                lawyerLawsuit.setLawsuit(savedLawsuit);
                 lawyerLawsuit.setLawyer(lawyer);
                 lawyerLawsuit.setHoursWorked(0);
 
@@ -63,17 +63,17 @@ public class LawsuitService {
             }
         }
 
-        return globalMapper.toLawsuitReadDto(savedLawsuit, true, true);
+        return globalMapper.toLawsuitReadDto(savedLawsuit, true, true, true);
     }
 
     public Optional<LawsuitReadDTO> getLawsuitById(Integer lawsuitId) {
         return lawsuitRepository.findById(lawsuitId)
-                .map(l -> globalMapper.toLawsuitReadDto(l, true, true));
+                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true));
     }
 
     public List<LawsuitReadDTO> getLawsuits() {
         return lawsuitRepository.findAll().stream()
-                .map(l -> globalMapper.toLawsuitReadDto(l, true, true))
+                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true))
                 .collect(Collectors.toList());
     }
 
@@ -101,7 +101,7 @@ public class LawsuitService {
                             .orElseThrow(() -> new LawyerNotFoundException("Lawyer not found for ID: " + lawyerId));
 
                     LawyerLawsuit newLawyerLawsuit = new LawyerLawsuit();
-                    newLawyerLawsuit.setLawsuitEntity(existingLawsuit);
+                    newLawyerLawsuit.setLawsuit(existingLawsuit);
                     newLawyerLawsuit.setLawyer(lawyer);
                     newLawyerLawsuit.setHoursWorked(0);
 
@@ -109,7 +109,7 @@ public class LawsuitService {
                 }
             }
 
-            return globalMapper.toLawsuitReadDto(lawsuitRepository.save(existingLawsuit), true, true);
+            return globalMapper.toLawsuitReadDto(lawsuitRepository.save(existingLawsuit), true, true, true);
         });
     }
 

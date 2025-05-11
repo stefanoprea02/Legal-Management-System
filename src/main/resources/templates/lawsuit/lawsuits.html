@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawsuits</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Lawsuits</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Reason</th>
+            <th>Opposing Party</th>
+            <th>Hearing</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="lawsuit : ${lawsuits}">
+            <td th:text="${lawsuit.lawsuitId}"></td>
+            <td th:text="${lawsuit.client.firstName + ' ' + lawsuit.client.lastName}"></td>
+            <td th:text="${lawsuit.reason}"></td>
+            <td th:text="${lawsuit.opposingParty}"></td>
+            <td th:text="${#dates.format(lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <a th:href="@{'/lawsuits/' + ${lawsuit.lawsuitId}}" class="btn btn-primary btn-sm">View</a>
+                <a th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{'/lawsuits/create'}" class="btn btn-success">Add New Lawsuit</a>
+</main>
+</body>
+</html>

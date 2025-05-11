@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoices</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Invoices</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Due Date</th>
+            <th>Client</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice : ${invoices}">
+            <td th:text="${invoice.invoiceId}"></td>
+            <td th:text="${invoice.amount}"></td>
+            <td th:text="${#dates.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+            <td th:text="${invoice.client.firstName + ' ' + invoice.client.lastName}"></td>
+            <td>
+                <a th:href="@{'/invoices/' + ${invoice.invoiceId}}" class="btn btn-primary btn-sm">View</a>
+                <a th:href="@{'/invoices/edit/' + ${invoice.invoiceId}}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{'/invoices/delete/' + ${invoice.invoiceId}}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{'/invoices/create'}" class="btn btn-success">Add New Invoice</a>
+</main>
+</body>
+</html>

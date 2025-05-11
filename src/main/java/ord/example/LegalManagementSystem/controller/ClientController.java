@@ -3,15 +3,19 @@ package ord.example.LegalManagementSystem.controller;
 import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Client.ClientCUDTO;
 import ord.example.LegalManagementSystem.dtos.Client.ClientReadDTO;
+import ord.example.LegalManagementSystem.exceptions.ClientNotFoundException;
 import ord.example.LegalManagementSystem.service.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/clients")
 public class ClientController {
     private final ClientService clientService;
@@ -20,23 +24,41 @@ public class ClientController {
         this.clientService = clientService;
     }
 
+    @GetMapping("/create")
+    public String getClientForm(Model model) {
+        model.addAttribute("client", new ClientCUDTO());
+        return "client/form";
+    }
+
     @PostMapping
-    public ResponseEntity<ClientReadDTO> createClient(@Valid @RequestBody ClientCUDTO clientCUDTO) {
+    public String createClient(@Valid @ModelAttribute("client") ClientCUDTO clientCUDTO, BindingResult bindingResult) {
         ClientReadDTO savedClient = clientService.saveClient(clientCUDTO);
-        return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
+
+        if (bindingResult.hasErrors()) {
+            return "client/form";
+        } else {
+            return "redirect:/clients/" + savedClient.getClientId();
+        }
     }
 
     @GetMapping("/{clientId}")
-    public ResponseEntity<ClientReadDTO> getClientById(@PathVariable Integer clientId) {
+    public String getClientById(@PathVariable Integer clientId, Model model) {
         Optional<ClientReadDTO> client = clientService.getClientById(clientId);
-        return client.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (client.isEmpty()) {
+            throw new ClientNotFoundException("Client with ID " + clientId + " not found");
+        } else {
+            model.addAttribute("client", client.get());
+            return "client/client";
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<ClientReadDTO>> getAllClients() {
+    public String getAllClients(Model model) {
         List<ClientReadDTO> clients = clientService.getClients();
-        return new ResponseEntity<>(clients, HttpStatus.OK);
+
+        model.addAttribute("clients", clients);
+        return "client/clients";
     }
 
     @PutMapping("/{clientId}")

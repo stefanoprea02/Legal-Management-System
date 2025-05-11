@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Form</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${#strings.isEmpty(client.firstName) ? 'Create Client' : 'Edit Client'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${client}" method="post" novalidate>
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <input id="firstName" type="text" th:field="*{firstName}" class="form-control" maxlength="20" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input id="lastName" type="text" th:field="*{lastName}" class="form-control" maxlength="20" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="clientAddress" class="form-label">Address</label>
+            <input id="clientAddress" type="text" th:field="*{clientAddress}" class="form-control" maxlength="100" />
+            <div class="text-danger" th:if="${#fields.hasErrors('clientAddress')}" th:errors="*{clientAddress}">Address error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/clients'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>
