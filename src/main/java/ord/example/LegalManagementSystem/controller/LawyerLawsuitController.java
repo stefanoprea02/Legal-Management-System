@@ -5,11 +5,14 @@ import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitCreateD
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.LawyerLawsuitNotFoundException;
+import ord.example.LegalManagementSystem.service.LawsuitService;
 import ord.example.LegalManagementSystem.service.LawyerLawsuitService;
+import ord.example.LegalManagementSystem.service.LawyerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +21,35 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/lawyer-lawsuits")
 public class LawyerLawsuitController {
-
     private final LawyerLawsuitService lawyerLawsuitService;
+    private final LawyerService lawyerService;
+    private final LawsuitService lawsuitService;
 
-    public LawyerLawsuitController(LawyerLawsuitService lawyerLawsuitService) {
+    public LawyerLawsuitController(LawyerLawsuitService lawyerLawsuitService, LawyerService lawyerService, LawsuitService lawsuitService) {
         this.lawyerLawsuitService = lawyerLawsuitService;
+        this.lawyerService = lawyerService;
+        this.lawsuitService = lawsuitService;
+    }
+
+    @GetMapping("/create")
+    public String showCreateLawyerLawsuitForm(Model model) {
+        model.addAttribute("lawyerLawsuit", new LawyerLawsuitCreateDTO());
+        model.addAttribute("lawyers", lawyerService.getLawyers());
+        model.addAttribute("lawsuits", lawsuitService.getLawsuits());
+        model.addAttribute("formAction", "/lawyer-lawsuits");
+        return "lawyerLawsuit/form";
     }
 
     @PostMapping
-    public ResponseEntity<LawyerLawsuitReadDTO> createLawyerLawsuit(@Valid @RequestBody LawyerLawsuitCreateDTO lawyerLawsuitCreateDTO) {
+    public String createLawyerLawsuit(@Valid @ModelAttribute("lawyerLawsuit") LawyerLawsuitCreateDTO lawyerLawsuitCreateDTO,
+                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "lawyerLawsuit/form";
+        }
+
         LawyerLawsuitReadDTO savedLawyerLawsuit = lawyerLawsuitService.createLawyerLawsuit(lawyerLawsuitCreateDTO);
-        return new ResponseEntity<>(savedLawyerLawsuit, HttpStatus.CREATED);
+
+        return "redirect:/lawyer-lawsuits/" + savedLawyerLawsuit.getId();
     }
 
     @GetMapping("/{lawyerLawsuitId}")
@@ -51,26 +72,47 @@ public class LawyerLawsuitController {
         return "lawyerLawsuit/lawyerLawsuits";
     }
 
-    @GetMapping("/lawsuit/{lawsuitId}")
-    public ResponseEntity<List<LawyerLawsuitReadDTO>> getLawyerLawsuitsByLawsuitId(@PathVariable Integer lawsuitId) {
-        List<LawyerLawsuitReadDTO> lawyerLawsuits = lawyerLawsuitService.getLawyerLawsuitsByLawsuitId(lawsuitId);
-        return new ResponseEntity<>(lawyerLawsuits, HttpStatus.OK);
+    @GetMapping("/edit/{lawyerLawsuitId}")
+    public String showEditLawyerLawsuitForm(@PathVariable Integer lawyerLawsuitId, Model model) {
+        Optional<LawyerLawsuitReadDTO> lawyerLawsuit = lawyerLawsuitService.getLawyerLawsuitById(lawyerLawsuitId);
+
+        if (lawyerLawsuit.isEmpty()) {
+            throw new LawyerLawsuitNotFoundException("LawyerLawsuit with ID " + lawyerLawsuitId + " not found");
+        } else {
+            model.addAttribute("lawyerLawsuit", lawyerLawsuit.get());
+            model.addAttribute("lawyers", lawyerService.getLawyers());
+            model.addAttribute("lawsuits", lawsuitService.getLawsuits());
+            model.addAttribute("formAction", "/lawyer-lawsuits/" + lawyerLawsuitId);
+            return "lawyerLawsuit/form";
+        }
     }
 
-    @PutMapping("/{lawyerLawsuitId}")
-    public ResponseEntity<LawyerLawsuitReadDTO> updateLawyerLawsuit(@PathVariable Integer lawyerLawsuitId, @Valid @RequestBody LawyerLawsuitUpdateDTO lawyerLawsuitUpdateDTO) {
+    @PostMapping("/{lawyerLawsuitId}")
+    public String updateLawyerLawsuit(@PathVariable Integer lawyerLawsuitId,
+                                      @Valid @ModelAttribute("lawyerLawsuit") LawyerLawsuitUpdateDTO lawyerLawsuitUpdateDTO,
+                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "lawyerLawsuit/form";
+        }
+
         Optional<LawyerLawsuitReadDTO> updatedLawyerLawsuit = lawyerLawsuitService.updateLawyerLawsuitById(lawyerLawsuitId, lawyerLawsuitUpdateDTO);
-        return updatedLawyerLawsuit.map(lc -> new ResponseEntity<>(lc, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if (updatedLawyerLawsuit.isEmpty()) {
+            throw new LawyerLawsuitNotFoundException("LawyerLawsuit with ID " + lawyerLawsuitId + " not found");
+        } else {
+            return "redirect:/lawyer-lawsuits/" + updatedLawyerLawsuit.get().getId();
+        }
     }
 
-    @DeleteMapping("/{lawyerLawsuitId}")
-    public ResponseEntity<Void> deleteLawyerLawsuit(@PathVariable Integer lawyerLawsuitId) {
-        try {
+    @PostMapping("/delete/{lawyerLawsuitId}")
+    public String deleteLawyerLawsuit(@PathVariable Integer lawyerLawsuitId) {
+        Optional<LawyerLawsuitReadDTO> lawyerLawsuitReadDTO = lawyerLawsuitService.getLawyerLawsuitById(lawyerLawsuitId);
+
+        if (lawyerLawsuitReadDTO.isEmpty()) {
+            throw new LawyerLawsuitNotFoundException("LawyerLawsuit with ID " + lawyerLawsuitId + " not found");
+        } else {
             lawyerLawsuitService.deleteLawyerLawsuit(lawyerLawsuitId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return "redirect:/lawyer-lawsuits";
         }
     }
 }

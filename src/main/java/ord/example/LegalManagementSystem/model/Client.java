@@ -25,6 +25,7 @@ public class Client {
     @Size(max = 20)
     private String lastName;
 
+    @NotBlank
     @Size(max = 100)
     private String clientAddress;
 

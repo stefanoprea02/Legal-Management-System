@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formAction == '/invoices' ? 'Create Invoice' : 'Edit Invoice'}"></title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${formAction == '/invoices' ? 'Create Invoice' : 'Edit Invoice'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${invoice}" method="post">
+        <div class="mb-3" th:if="${formAction == '/invoices'}">
+            <label for="clientId" class="form-label">Client</label>
+            <select id="clientId" th:field="*{clientId}" class="form-select" required>
+                <option value="" disabled selected>Select a Client</option>
+                <option th:each="client : ${clients}" th:value="${client.clientId}"
+                        th:text="${client.firstName + ' ' + client.lastName}"
+                        th:selected="${client.clientId == invoice.clientId}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('clientId')}" th:errors="*{clientId}">Client error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input id="amount" type="number" th:field="*{amount}" class="form-control" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="dueDate" class="form-label">Due Date</label>
+            <input id="dueDate" type="date" th:field="*{dueDate}" class="form-control" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}">Due Date error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/invoices'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

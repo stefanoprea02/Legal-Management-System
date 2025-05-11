@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formAction == '/lawsuits' ? 'Create Lawsuit' : 'Edit Lawsuit'}"></title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${formAction == '/lawsuits' ? 'Create Lawsuit' : 'Edit Lawsuit'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${lawsuit}" method="post">
+        <div class="mb-3" th:if="${formAction == '/lawsuits'}">
+            <label for="clientId" class="form-label">Client</label>
+            <select id="clientId" th:field="*{clientId}" class="form-select" required>
+                <option value="" disabled selected>Select a Client</option>
+                <option th:each="client : ${clients}" th:value="${client.clientId}"
+                        th:text="${client.firstName + ' ' + client.lastName}"
+                        th:selected="${client.clientId == lawsuit.clientId}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('clientId')}" th:errors="*{clientId}">Client error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="reason" class="form-label">Reason</label>
+            <input id="reason" type="text" th:field="*{reason}" class="form-control" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}">Reason error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="opposingParty" class="form-label">Opposing Party</label>
+            <input id="opposingParty" type="text" th:field="*{opposingParty}" class="form-control" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('opposingParty')}" th:errors="*{opposingParty}">Opposing Party error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lawyerIds" class="form-label">Lawyers</label>
+            <select id="lawyerIds" th:field="*{lawyerIds}" class="form-select" multiple required>
+                <option th:each="lawyer : ${lawyers}" th:value="${lawyer.lawyerId}"
+                        th:text="${lawyer.firstName + ' ' + lawyer.lastName}"
+                        th:selected="${lawyerIds != null && lawyerIds.contains(lawyer.lawyerId)}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawyerIds')}" th:errors="*{lawyerIds}">Lawyer error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/lawsuits'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

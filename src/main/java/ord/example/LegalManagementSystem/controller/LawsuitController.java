@@ -4,29 +4,57 @@ import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitUpdateDTO;
+import ord.example.LegalManagementSystem.dtos.Lawyer.LawyerReadDTO;
+import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO;
 import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
+import ord.example.LegalManagementSystem.service.ClientService;
 import ord.example.LegalManagementSystem.service.LawsuitService;
+import ord.example.LegalManagementSystem.service.LawyerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/lawsuits")
 public class LawsuitController {
     private final LawsuitService lawsuitService;
+    private final ClientService clientService;
+    private final LawyerService lawyerService;
 
-    public LawsuitController(LawsuitService lawsuitService) {
+    public LawsuitController(LawsuitService lawsuitService, ClientService clientService, LawyerService lawyerService) {
         this.lawsuitService = lawsuitService;
+        this.clientService = clientService;
+        this.lawyerService = lawyerService;
+    }
+
+    @GetMapping("/create")
+    public String createLawsuitForm(Model model) {
+        LawsuitCreateDTO lawsuitCreateDTO = new LawsuitCreateDTO();
+        model.addAttribute("lawsuit", lawsuitCreateDTO);
+        model.addAttribute("clients", clientService.getClients());
+        model.addAttribute("lawyers", lawyerService.getLawyers());
+        model.addAttribute("formAction", "/lawsuits");
+        return "lawsuit/form";
     }
 
     @PostMapping
-    public ResponseEntity<LawsuitReadDTO> createLawsuit(@Valid @RequestBody LawsuitCreateDTO lawsuitCreateDTO) {
+    public String createLawsuit(@Valid @ModelAttribute("lawsuit") LawsuitCreateDTO lawsuitCreateDTO,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "lawsuit/form";
+        }
+
         LawsuitReadDTO savedlawsuit = lawsuitService.saveLawsuite(lawsuitCreateDTO);
-        return new ResponseEntity<>(savedlawsuit, HttpStatus.CREATED);
+
+        return "redirect:/lawsuits/" + savedlawsuit.getLawsuitId();
     }
 
     @GetMapping("/{lawsuitId}")
@@ -41,7 +69,7 @@ public class LawsuitController {
         }
     }
 
-    @GetMapping("")
+    @GetMapping
     public String getLawsuits(Model model) {
         List<LawsuitReadDTO> lawsuits = lawsuitService.getLawsuits();
 
@@ -49,20 +77,56 @@ public class LawsuitController {
         return "lawsuit/lawsuits";
     }
 
-    @PutMapping("/{lawsuitId}")
-    public ResponseEntity<LawsuitReadDTO> updateLawsuit(@PathVariable Integer lawsuitId, @Valid @RequestBody LawsuitUpdateDTO lawsuitUpdateDTO) {
-        Optional<LawsuitReadDTO> updatedLawsuitOptional = lawsuitService.updateLawsuitById(lawsuitId, lawsuitUpdateDTO);
-        return updatedLawsuitOptional.map(c -> new ResponseEntity<>(c, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @GetMapping("/edit/{lawsuitId}")
+    public String getEditForm(@PathVariable Integer lawsuitId, Model model) {
+        Optional<LawsuitReadDTO> lawsuitOptional = lawsuitService.getLawsuitById(lawsuitId);
+
+        if (lawsuitOptional.isEmpty()) {
+            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
+        } else {
+            LawsuitReadDTO readDTO = lawsuitOptional.get();
+            LawsuitUpdateDTO updateDTO = new LawsuitUpdateDTO();
+            updateDTO.setReason(readDTO.getReason());
+            updateDTO.setOpposingParty(readDTO.getOpposingParty());
+            updateDTO.setLawyerIds(new ArrayList<>(readDTO.getLawyerLawsuits().stream()
+                    .map(LawyerLawsuitReadDTO::getLawyer)
+                    .map(LawyerReadDTO::getLawyerId)
+                    .collect(Collectors.toSet())));
+
+            model.addAttribute("lawsuit", updateDTO);
+            model.addAttribute("clients", clientService.getClients());
+            model.addAttribute("lawyers", lawyerService.getLawyers());
+            model.addAttribute("formAction", "/lawsuits/" + lawsuitId);
+            return "lawsuit/form";
+        }
     }
 
-    @DeleteMapping("/{lawsuitId}")
-    public ResponseEntity<Void> deleteLawsuit(@PathVariable Integer lawsuitId) {
-        try {
+    @PostMapping("/{lawsuitId}")
+    public String updateLawsuit(@PathVariable Integer lawsuitId,
+                                @Valid @ModelAttribute("lawsuit") LawsuitUpdateDTO lawsuitUpdateDTO,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "lawsuit/form";
+        }
+
+        Optional<LawsuitReadDTO> updatedLawsuitOptional = lawsuitService.updateLawsuitById(lawsuitId, lawsuitUpdateDTO);
+
+        if (updatedLawsuitOptional.isEmpty()) {
+            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
+        } else {
+            return "redirect:/lawsuits/" + updatedLawsuitOptional.get().getLawsuitId();
+        }
+    }
+
+    @PostMapping("/delete/{lawsuitId}")
+    public String deleteLawsuit(@PathVariable Integer lawsuitId) {
+        Optional<LawsuitReadDTO> lawsuitOptional = lawsuitService.getLawsuitById(lawsuitId);
+
+        if (lawsuitOptional.isEmpty()) {
+            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
+        } else {
             lawsuitService.deleteLawsuitById(lawsuitId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return "redirect:/lawsuits";
         }
     }
 }

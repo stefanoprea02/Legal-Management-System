@@ -15,7 +15,7 @@
             <th>ID</th>
             <th>Date & Time</th>
             <th>Address</th>
-            <th>Lawsuit ID</th>
+            <th>Lawsuit</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -24,10 +24,13 @@
             <td th:text="${hearing.hearingId}"></td>
             <td th:text="${#dates.format(hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
             <td th:text="${hearing.appointmentAddress}"></td>
-            <td th:text="${hearing.lawsuit.lawsuitId}"><td>
+            <td th:text="${hearing.lawsuit.reason}">
+            <td>
                 <a th:href="@{'/hearings/' + ${hearing.hearingId}}" class="btn btn-primary btn-sm">View</a>
                 <a th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/hearings/delete/' + ${hearing.hearingId}}" class="btn btn-danger btn-sm">Delete</a>
+                <form th:action="@{'/hearings/delete/' + ${hearing.hearingId}}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

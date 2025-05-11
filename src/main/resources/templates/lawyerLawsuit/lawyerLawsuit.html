@@ -74,11 +74,13 @@
         </tr>
         <tr>
             <th>Hearing Date</th>
-            <td th:text="${#dates.format(lawyerLawsuit.lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:if="${lawyerLawsuit.lawsuit.hearing != null}" th:text="${#dates.format(lawyerLawsuit.lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:if="${lawyerLawsuit.lawsuit.hearing == null}">No Hearing</td>
         </tr>
         <tr>
             <th>Hearing Address</th>
-            <td th:text="${lawyerLawsuit.lawsuit.hearing.appointmentAddress}"></td>
+            <td th:if="${lawyerLawsuit.lawsuit.hearing != null}" th:text="${lawyerLawsuit.lawsuit.hearing.appointmentAddress}"></td>
+            <td th:if="${lawyerLawsuit.lawsuit.hearing == null}">No Hearing</td>
         </tr>
     </table>
 

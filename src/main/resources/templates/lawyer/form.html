@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formAction == '/lawyers' ? 'Create Lawyer' : 'Edit Lawyer'}"></title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${formAction == '/lawyers' ? 'Create Lawyer' : 'Edit Lawyer'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${lawyer}" method="post">
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <input id="firstName" type="text" th:field="*{firstName}" class="form-control" required maxlength="20"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First Name error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input id="lastName" type="text" th:field="*{lastName}" class="form-control" required maxlength="20"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last Name error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="hireDate" class="form-label">Hire Date</label>
+            <input id="hireDate" type="date" th:field="*{hireDate}" class="form-control" required/>
+            <div class="text-danger" th:if="${#fields.hasErrors('hireDate')}" th:errors="*{hireDate}">Hire Date error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lawyerType" class="form-label">Lawyer Type</label>
+            <input id="lawyerType" type="text" th:field="*{lawyerType}" class="form-control" maxlength="15"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawyerType')}" th:errors="*{lawyerType}">Lawyer Type error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="hourlyRate" class="form-label">Hourly Rate</label>
+            <input id="hourlyRate" type="number" th:field="*{hourlyRate}" class="form-control" required min="1"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('hourlyRate')}" th:errors="*{hourlyRate}">Hourly Rate error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="commission" class="form-label">Commission</label>
+            <input id="commission" type="number" th:field="*{commission}" class="form-control" min="0" max="1" step="0.01"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('commission')}" th:errors="*{commission}">Commission error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lawyerAddress" class="form-label">Address</label>
+            <input id="lawyerAddress" type="text" th:field="*{lawyerAddress}" class="form-control" maxlength="100"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawyerAddress')}" th:errors="*{lawyerAddress}">Address error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lawsuitIds" class="form-label">Lawsuits</label>
+            <select id="lawsuitIds" th:field="*{lawsuitIds}" class="form-select" multiple>
+                <option th:each="lawsuit : ${lawsuits}" th:value="${lawsuit.lawsuitId}"
+                        th:text="${lawsuit.reason}"
+                        th:selected="${lawsuitIds != null && lawsuitIds.contains(lawsuit.lawsuitId)}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawsuitIds')}" th:errors="*{lawsuitIds}">Lawsuit error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/lawyers'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formAction == '/lawyer-lawsuits' ? 'Create Lawyer-Lawsuit Association' : 'Edit Lawyer-Lawsuit Association'}"></title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${formAction == '/lawyer-lawsuits' ? 'Create Lawyer-Lawsuit Association' : 'Edit Lawyer-Lawsuit Association'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${lawyerLawsuit}" method="post">
+        <div class="mb-3" th:if="${formAction == '/lawyer-lawsuits'}">
+            <label for="lawyerId" class="form-label">Lawyer</label>
+            <select id="lawyerId" th:field="*{lawyerId}" class="form-select" required>
+                <option th:each="lawyer : ${lawyers}" th:value="${lawyer.lawyerId}"
+                        th:text="${lawyer.firstName + ' ' + lawyer.lastName}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawyerId')}" th:errors="*{lawyerId}">Lawyer error</div>
+        </div>
+
+        <div class="mb-3" th:if="${formAction == '/lawyer-lawsuits'}">
+            <label for="lawsuitId" class="form-label">Lawsuit</label>
+            <select id="lawsuitId" th:field="*{lawsuitId}" class="form-select" required>
+                <option th:each="lawsuit : ${lawsuits}" th:value="${lawsuit.lawsuitId}"
+                        th:text="${lawsuit.reason}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawsuitId')}" th:errors="*{lawsuitId}">Lawsuit error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="hoursWorked" class="form-label">Hours Worked</label>
+            <input id="hoursWorked" type="number" th:field="*{hoursWorked}" class="form-control" required min="1"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('hoursWorked')}" th:errors="*{hoursWorked}">Hours Worked error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/lawyer-lawsuits'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

@@ -14,7 +14,7 @@
         <tr>
             <th>ID</th>
             <th>Lawyer</th>
-            <th>Lawsuit ID</th>
+            <th>Lawsuit</th>
             <th>Hours Worked</th>
             <th>Actions</th>
         </tr>
@@ -23,12 +23,14 @@
         <tr th:each="lawyerLawsuit : ${lawyerLawsuits}">
             <td th:text="${lawyerLawsuit.id}"></td>
             <td th:text="${lawyerLawsuit.lawyer.firstName + ' ' + lawyerLawsuit.lawyer.lastName}"></td>
-            <td th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></td>
+            <td th:text="${lawyerLawsuit.lawsuit.reason}"></td>
             <td th:text="${lawyerLawsuit.hoursWorked}"></td>
             <td>
                 <a th:href="@{'/lawyer-lawsuits/' + ${lawyerLawsuit.id}}" class="btn btn-primary btn-sm">View</a>
                 <a th:href="@{'/lawyer-lawsuits/edit/' + ${lawyerLawsuit.id}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/lawyer-lawsuits/delete/' + ${lawyerLawsuit.id}}" class="btn btn-danger btn-sm">Delete</a>
+                <form th:action="@{'/lawyer-lawsuits/delete/' + ${lawyerLawsuit.id}}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

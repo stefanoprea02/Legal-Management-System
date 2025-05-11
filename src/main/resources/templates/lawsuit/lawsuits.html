@@ -26,11 +26,14 @@
             <td th:text="${lawsuit.client.firstName + ' ' + lawsuit.client.lastName}"></td>
             <td th:text="${lawsuit.reason}"></td>
             <td th:text="${lawsuit.opposingParty}"></td>
-            <td th:text="${#dates.format(lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:if="${lawsuit.hearing != null}" th:text="${#dates.format(lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:if="${lawsuit.hearing == null}">No Hearing</td>
             <td>
                 <a th:href="@{'/lawsuits/' + ${lawsuit.lawsuitId}}" class="btn btn-primary btn-sm">View</a>
                 <a th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" class="btn btn-danger btn-sm">Delete</a>
+                <form th:action="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

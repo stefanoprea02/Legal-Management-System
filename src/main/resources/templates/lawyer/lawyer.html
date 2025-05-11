@@ -46,13 +46,13 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Lawsuit ID</th>
+            <th>Lawsuit</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="lawyerLawsuit : ${lawyer.lawyerLawsuits}">
-            <td th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></td>
+            <td th:text="${lawyerLawsuit.lawsuit.reason}"></td>
             <td>
                 <a th:href="@{'/lawsuits/' + ${lawyerLawsuit.lawsuit.lawsuitId}}" class="btn btn-info btn-sm">View</a>
             </td>

@@ -10,7 +10,7 @@
 <main layout:fragment="content" class="container mt-4">
     <h1 class="mb-4" th:text="${#strings.isEmpty(client.firstName) ? 'Create Client' : 'Edit Client'}"></h1>
 
-    <form th:action="@{${formAction}}" th:object="${client}" method="post" novalidate>
+    <form th:action="@{${formAction}}" th:object="${client}" method="post">
         <div class="mb-3">
             <label for="firstName" class="form-label">First Name</label>
             <input id="firstName" type="text" th:field="*{firstName}" class="form-control" maxlength="20" required />

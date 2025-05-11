@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formAction == '/hearings' ? 'Create Hearing' : 'Edit Hearing'}"></title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4" th:text="${formAction == '/hearings' ? 'Create Hearing' : 'Edit Hearing'}"></h1>
+
+    <form th:action="@{${formAction}}" th:object="${hearing}" method="post">
+        <div class="mb-3" th:if="${formAction == '/hearings'}">
+            <label for="lawsuitId" class="form-label">Lawsuit ID</label>
+            <select id="lawsuitId" th:field="*{lawsuitId}" class="form-select" required>
+                <option value="" disabled selected>Select a Lawsuit</option>
+                <option th:each="lawsuit : ${lawsuits}" th:value="${lawsuit.lawsuitId}" th:text="${lawsuit.lawsuitId}"
+                        th:selected="${lawsuit.lawsuitId == hearing.lawsuitId}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('lawsuitId')}" th:errors="*{lawsuitId}">Lawsuit ID error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="dateTime" class="form-label">Date and Time</label>
+            <input id="dateTime" type="datetime-local" th:field="*{dateTime}" class="form-control" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('dateTime')}" th:errors="*{dateTime}">Date and Time error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="appointmentAddress" class="form-label">Appointment Address</label>
+            <input id="appointmentAddress" type="text" th:field="*{appointmentAddress}" class="form-control" maxlength="100" />
+            <div class="text-danger" th:if="${#fields.hasErrors('appointmentAddress')}" th:errors="*{appointmentAddress}">Appointment Address error</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a th:href="@{'/hearings'}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

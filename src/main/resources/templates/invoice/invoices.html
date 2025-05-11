@@ -28,7 +28,9 @@
             <td>
                 <a th:href="@{'/invoices/' + ${invoice.invoiceId}}" class="btn btn-primary btn-sm">View</a>
                 <a th:href="@{'/invoices/edit/' + ${invoice.invoiceId}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/invoices/delete/' + ${invoice.invoiceId}}" class="btn btn-danger btn-sm">Delete</a>
+                <form th:action="@{'/invoices/delete/' + ${invoice.invoiceId}}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

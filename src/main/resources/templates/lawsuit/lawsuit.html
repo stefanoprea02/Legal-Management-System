@@ -18,7 +18,10 @@
         </tr>
         <tr>
             <th>Client</th>
-            <td th:text="${lawsuit.client.firstName + ' ' + lawsuit.client.lastName}"></td>
+            <td>
+                <span th:text="${lawsuit.client.firstName + ' ' + lawsuit.client.lastName}"></span>
+                <a th:href="@{'/clients/' + ${lawsuit.client.clientId}}" class="btn btn-info btn-sm ml-2">View Client</a>
+            </td>
         </tr>
         <tr>
             <th>Reason</th>
@@ -30,10 +33,11 @@
         </tr>
         <tr>
             <th>Hearing Date</th>
-            <td>
+            <td th:if="${lawsuit.hearing != null}">
                 <span th:text="${#dates.format(lawsuit.hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></span>
                 <a th:href="@{'/hearings/' + ${lawsuit.hearing.hearingId}}" class="btn btn-info btn-sm ml-2">View Hearing</a>
             </td>
+            <td th:if="${lawsuit.hearing == null}">No Hearing</td>
         </tr>
     </table>
 
