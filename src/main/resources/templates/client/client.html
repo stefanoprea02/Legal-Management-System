@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Client Details</title>
@@ -70,7 +71,7 @@
         </tbody>
     </table>
 
-    <a th:href="@{'/clients/edit/' + ${client.clientId}}" class="btn btn-warning mt-3">Edit Client</a>
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/clients/edit/' + ${client.clientId}}" class="btn btn-warning mt-3">Edit Client</a>
 </main>
 </body>
 </html>

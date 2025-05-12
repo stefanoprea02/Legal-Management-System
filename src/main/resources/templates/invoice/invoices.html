@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  layout:decorate="~{main.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Invoices</title>
@@ -27,15 +28,15 @@
             <td th:text="${invoice.client.firstName + ' ' + invoice.client.lastName}"></td>
             <td>
                 <a th:href="@{'/invoices/' + ${invoice.invoiceId}}" class="btn btn-primary btn-sm">View</a>
-                <a th:href="@{'/invoices/edit/' + ${invoice.invoiceId}}" class="btn btn-warning btn-sm">Edit</a>
-                <form th:action="@{'/invoices/delete/' + ${invoice.invoiceId}}" method="post">
+                <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/invoices/edit/' + ${invoice.invoiceId}}" class="btn btn-warning btn-sm">Edit</a>
+                <form sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:action="@{'/invoices/delete/' + ${invoice.invoiceId}}" method="post">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <a th:href="@{'/invoices/create'}" class="btn btn-success">Add New Invoice</a>
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/invoices/create'}" class="btn btn-success">Add New Invoice</a>
 </main>
 </body>
 </html>

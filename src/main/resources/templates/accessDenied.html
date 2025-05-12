@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Denied</title>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.2/css/all.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-4 text-danger">403</h1>
+            <p class="lead">Access Denied</p>
+            <p>You do not have permission to access this resource.</p>
+            <a th:href="@{/}" class="btn btn-primary mt-3">Return to Home</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

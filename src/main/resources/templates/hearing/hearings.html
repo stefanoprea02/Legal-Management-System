@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Hearings</title>
@@ -27,15 +28,15 @@
             <td th:text="${hearing.lawsuit.reason}">
             <td>
                 <a th:href="@{'/hearings/' + ${hearing.hearingId}}" class="btn btn-primary btn-sm">View</a>
-                <a th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning btn-sm">Edit</a>
-                <form th:action="@{'/hearings/delete/' + ${hearing.hearingId}}" method="post">
+                <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning btn-sm">Edit</a>
+                <form sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:action="@{'/hearings/delete/' + ${hearing.hearingId}}" method="post">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <a th:href="@{'/hearings/create'}" class="btn btn-success">Add New Hearing</a>
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/create'}" class="btn btn-success">Add New Hearing</a>
 </main>
 </body>
 </html>

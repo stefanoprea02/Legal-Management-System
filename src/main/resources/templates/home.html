@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Legal Management System</title>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h1 class="mb-4">Legal Management System</h1>
+
+    <p>
+        The Legal Management System is designed to assist law firms and legal professionals in managing clients, lawsuits, hearings, invoices, and lawyer assignments efficiently.
+    </p>
+
+    <h3 class="mt-4">Business Requirements</h3>
+    <ul>
+        <li><strong>Client Management:</strong> Maintain a comprehensive database of clients, including contact details and active lawsuits.</li>
+        <li><strong>Lawsuit Management:</strong> Track lawsuits with their hearings and status updates.</li>
+        <li><strong>Hearing Scheduling:</strong> Schedule and manage hearings for lawsuits.</li>
+        <li><strong>Invoice Management:</strong> Generate and track invoices for legal services.</li>
+        <li><strong>Lawyer Assignment:</strong> Assign lawyers dynamically and view current assignments.</li>
+        <li><strong>Unit Testing:</strong> Ensure system reliability through unit tests.</li>
+        <li><strong>API Documentation:</strong> Use Swagger for documenting APIs.</li>
+        <li><strong>Entity Relationship Diagram (ERD):</strong> Visual representation of the database schema.</li>
+        <li><strong>Data Validation:</strong> Use field-level validation to ensure data integrity.</li>
+        <li><strong>Error Handling:</strong> Provide meaningful error messages to users.</li>
+        <li><strong>Postman Collection:</strong> Shareable API request collection for testing.</li>
+    </ul>
+
+    <h3 class="mt-4">Core Features</h3>
+    <div class="accordion" id="featuresAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#feature1" aria-expanded="true">
+                    Feature 1: Client Management
+                </button>
+            </h2>
+            <div id="feature1" class="accordion-collapse collapse show" data-bs-parent="#featuresAccordion">
+                <div class="accordion-body">
+                    Manage client information, including personal details and associated lawsuits. Functions include creating, reading, updating, and deleting client records.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature2">
+                    Feature 2: Lawsuit Management
+                </button>
+            </h2>
+            <div id="feature2" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                <div class="accordion-body">
+                    Centralized system to manage lawsuits. Supports creating, reading, updating, and deleting lawsuit records.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature3">
+                    Feature 3: Hearing Management
+                </button>
+            </h2>
+            <div id="feature3" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                <div class="accordion-body">
+                    Schedule and manage hearings related to lawsuits. Full CRUD functionality included.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature4">
+                    Feature 4: Invoice Management
+                </button>
+            </h2>
+            <div id="feature4" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                <div class="accordion-body">
+                    Manage legal service invoices with capabilities to create, update, and track payments.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature5">
+                    Feature 5: Lawyer Management
+                </button>
+            </h2>
+            <div id="feature5" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                <div class="accordion-body">
+                    Assign lawyers to lawsuits and view current assignments. Full management functionality provided.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

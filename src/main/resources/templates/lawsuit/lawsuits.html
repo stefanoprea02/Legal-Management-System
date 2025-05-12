@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{main.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Lawsuits</title>
@@ -30,15 +31,15 @@
             <td th:if="${lawsuit.hearing == null}">No Hearing</td>
             <td>
                 <a th:href="@{'/lawsuits/' + ${lawsuit.lawsuitId}}" class="btn btn-primary btn-sm">View</a>
-                <a th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}" class="btn btn-warning btn-sm">Edit</a>
-                <form th:action="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" method="post">
+                <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}" class="btn btn-warning btn-sm">Edit</a>
+                <form sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:action="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" method="post">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <a th:href="@{'/lawsuits/create'}" class="btn btn-success">Add New Lawsuit</a>
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawsuits/create'}" class="btn btn-success">Add New Lawsuit</a>
 </main>
 </body>
 </html>

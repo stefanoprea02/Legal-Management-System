@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Legal Management System</title>
@@ -39,15 +40,22 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto topnav">
-                        <li class="nav-item">
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
                             <a class="nav-link btn-primary" th:href="@{'/login'}">
                                 <i class="fas fa-sign-in-alt"></i> Sign In
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
                             <a class="nav-link btn-primary" th:href="@{'/register'}">
                                 <i class="fas fa-user-plus"></i> Register
                             </a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()" class="nav-item">
+                            <form id="logout-form" th:action="@{/logout}" method="post">
+                                <button type="submit" class="nav-link btn-primary">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div>

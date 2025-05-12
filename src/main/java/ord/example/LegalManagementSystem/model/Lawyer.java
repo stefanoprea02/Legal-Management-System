@@ -16,7 +16,7 @@ public class Lawyer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer lawyerId;
-
+    
     @NotBlank
     @Size(max = 20)
     private String firstName;
