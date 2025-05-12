@@ -7,6 +7,7 @@ import ord.example.LegalManagementSystem.dtos.Invoice.InvoiceUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.InvoiceNotFoundException;
 import ord.example.LegalManagementSystem.service.ClientService;
 import ord.example.LegalManagementSystem.service.InvoiceService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -61,10 +62,16 @@ public class InvoiceController {
     }
 
     @GetMapping
-    public String getAllInvoices(Model model) {
-        List<InvoiceReadDTO> invoices = invoiceService.getInvoices();
+    public String getAllInvoices(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortField", defaultValue = "invoiceId") String sortField,
+            @RequestParam(value = "sortOrder", defaultValue = "asc") String sortOrder,
+            Model model) {
+        Page<InvoiceReadDTO> invoices = invoiceService.getInvoicesPage(page, sortField, sortOrder);
 
         model.addAttribute("invoices", invoices);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "invoice/invoices";
     }
 

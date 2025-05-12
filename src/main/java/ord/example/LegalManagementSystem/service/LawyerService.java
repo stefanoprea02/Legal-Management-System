@@ -10,6 +10,10 @@ import ord.example.LegalManagementSystem.model.LawyerLawsuit;
 import ord.example.LegalManagementSystem.repository.LawsuitRepository;
 import ord.example.LegalManagementSystem.repository.LawyerLawsuitRepository;
 import ord.example.LegalManagementSystem.repository.LawyerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,8 @@ public class LawyerService {
     private final LawyerLawsuitRepository lawyerLawsuitRepository;
     private final LawsuitRepository lawsuitRepository;
     private final GlobalMapper globalMapper;
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public LawyerService(LawyerRepository lawyerRepository, LawyerLawsuitRepository lawyerLawsuitRepository, LawsuitRepository lawsuitRepository, GlobalMapper globalMapper) {
         this.lawyerRepository = lawyerRepository;
@@ -67,6 +73,19 @@ public class LawyerService {
         return lawyerRepository.findAll().stream()
                 .map(l -> globalMapper.toLawyerReadDto(l, true))
                 .collect(Collectors.toList());
+    }
+
+    public Page<LawyerReadDTO> getLawyersPage(int page, String sortField, String sortOrder) {
+        Pageable pageable = PageRequest.of(
+                page,
+                DEFAULT_PAGE_SIZE,
+                sortOrder.equalsIgnoreCase("desc")
+                        ? Sort.by(sortField).descending()
+                        : Sort.by(sortField).ascending()
+        );
+
+        return lawyerRepository.findAll(pageable)
+                .map(l -> globalMapper.toLawyerReadDto(l, true));
     }
 
     @Transactional

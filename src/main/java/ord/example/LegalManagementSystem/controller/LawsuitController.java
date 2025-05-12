@@ -10,6 +10,7 @@ import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
 import ord.example.LegalManagementSystem.service.ClientService;
 import ord.example.LegalManagementSystem.service.LawsuitService;
 import ord.example.LegalManagementSystem.service.LawyerService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -70,10 +71,16 @@ public class LawsuitController {
     }
 
     @GetMapping
-    public String getLawsuits(Model model) {
-        List<LawsuitReadDTO> lawsuits = lawsuitService.getLawsuits();
+    public String getLawsuits(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortField", defaultValue = "lawsuitId") String sortField,
+            @RequestParam(value = "sortOrder", defaultValue = "asc") String sortOrder,
+            Model model) {
+        Page<LawsuitReadDTO> lawsuits = lawsuitService.getLawsuitsPage(page, sortField, sortOrder);
 
         model.addAttribute("lawsuits", lawsuits);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "lawsuit/lawsuits";
     }
 

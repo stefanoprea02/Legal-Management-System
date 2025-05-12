@@ -8,6 +8,7 @@ import ord.example.LegalManagementSystem.dtos.LawyerLawsuit.LawyerLawsuitReadDTO
 import ord.example.LegalManagementSystem.exceptions.LawyerNotFoundException;
 import ord.example.LegalManagementSystem.service.LawsuitService;
 import ord.example.LegalManagementSystem.service.LawyerService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -64,10 +65,16 @@ public class LawyerController {
     }
 
     @GetMapping
-    public String getAllLawyers(Model model) {
-        List<LawyerReadDTO> lawyers = lawyerService.getLawyers();
+    public String getAllLawyers(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortField", defaultValue = "lawyerId") String sortField,
+            @RequestParam(value = "sortOrder", defaultValue = "asc") String sortOrder,
+            Model model) {
+        Page<LawyerReadDTO> lawyers = lawyerService.getLawyersPage(page, sortField, sortOrder);
 
         model.addAttribute("lawyers", lawyers);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "lawyer/lawyers";
     }
 

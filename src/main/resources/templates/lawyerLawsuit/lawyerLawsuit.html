@@ -27,7 +27,10 @@
     <table class="table table-bordered">
         <tr>
             <th>Lawyer ID</th>
-            <td th:text="${lawyerLawsuit.lawyer.lawyerId}"></td>
+            <td>
+                <span th:text="${lawyerLawsuit.lawyer.lawyerId}"></span>
+                <a th:href="@{'/lawyers/' + ${lawyerLawsuit.lawyer.lawyerId}}" class="btn btn-info btn-sm ml-2">View Lawyer</a>
+            </td>
         </tr>
         <tr>
             <th>Name</th>
@@ -59,7 +62,10 @@
     <table class="table table-bordered">
         <tr>
             <th>Lawsuit ID</th>
-            <td th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></td>
+            <td>
+                <span th:text="${lawyerLawsuit.lawsuit.lawsuitId}"></span>
+                <a th:href="@{'/lawsuits/' + ${lawyerLawsuit.lawsuit.lawsuitId}}" class="btn btn-info btn-sm ml-2">View Lawsuit</a>
+            </td>
         </tr>
         <tr>
             <th>Reason</th>
@@ -85,7 +91,13 @@
         </tr>
     </table>
 
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawyer-lawsuits/edit/' + ${lawyerLawsuit.id}}" class="btn btn-warning mt-3">Edit Assignment</a>
+    <div class="d-flex align-items-center mt-3 gap-2" sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')">
+        <a th:href="@{'/lawyer-lawsuits/edit/' + ${lawyerLawsuit.id}}"
+           class="btn btn-warning">Edit Assignment</a>
+        <form th:action="@{'/lawyer-lawsuits/delete/' + ${lawyerLawsuit.id}}" method="post">
+            <button type="submit" class="btn btn-danger">Delete Assignment</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

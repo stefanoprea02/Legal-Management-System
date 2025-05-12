@@ -13,16 +13,31 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Address</th>
+            <th>
+                <a th:href="@{'/clients?page=0&sortField=clientId&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'clientId')}}"
+                   class="text-decoration-none">
+                    ID <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'clientId')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/clients?page=0&sortField=firstName&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'firstName')}}"
+                   class="text-decoration-none">
+                    Name <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'firstName')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/clients?page=0&sortField=clientAddress&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'clientAddress')}}"
+                   class="text-decoration-none">
+                    Address <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'clientAddress')}"></span>
+                </a>
+            </th>
             <th>Invoices</th>
             <th>Lawsuits</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="client : ${clients}">
+        <tr th:each="client : ${clients.content}">
             <td th:text="${client.clientId}"></td>
             <td th:text="${client.firstName + ' ' + client.lastName}"></td>
             <td th:text="${client.clientAddress}"></td>
@@ -38,7 +53,22 @@
         </tr>
         </tbody>
     </table>
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/clients/create'}" class="btn btn-success">Add New Client</a>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <span th:text="'Page ' + (${clients.number} + 1) + ' of ' + ${clients.totalPages}"></span>
+        </div>
+        <div>
+            <span th:if="${clients.hasPrevious()}">
+                <a th:href="@{'/clients?page=' + (${clients.number} - 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Previous</a>
+            </span>
+            <span th:if="${clients.hasNext()}">
+                <a th:href="@{'/clients?page=' + (${clients.number} + 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Next</a>
+            </span>
+        </div>
+    </div>
+
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/clients/create'}" class="btn btn-success mt-4">Add New Client</a>
 </main>
 </body>
 </html>

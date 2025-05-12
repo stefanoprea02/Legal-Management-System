@@ -34,7 +34,13 @@
         </tr>
     </table>
 
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning mt-3">Edit Hearing</a>
+    <div class="d-flex align-items-center mt-3 gap-2" sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')">
+        <a th:href="@{'/hearings/edit/' + ${hearing.hearingId}}"
+           class="btn btn-warning">Edit Hearing</a>
+        <form th:action="@{'/hearings/delete/' + ${hearing.hearingId}}" method="post">
+            <button type="submit" class="btn btn-danger">Delete Hearing</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

@@ -71,7 +71,13 @@
         </tbody>
     </table>
 
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/clients/edit/' + ${client.clientId}}" class="btn btn-warning mt-3">Edit Client</a>
+    <div class="d-flex align-items-center mt-3 gap-2" sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')">
+        <a th:href="@{'/clients/edit/' + ${client.clientId}}"
+           class="btn btn-warning">Edit Client</a>
+        <form th:action="@{'/clients/delete/' + ${client.clientId}}" method="post">
+            <button type="submit" class="btn btn-danger">Delete Client</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

@@ -9,6 +9,10 @@ import ord.example.LegalManagementSystem.model.Invoice;
 import ord.example.LegalManagementSystem.model.Client;
 import ord.example.LegalManagementSystem.repository.InvoiceRepository;
 import ord.example.LegalManagementSystem.repository.ClientRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,8 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
     private final GlobalMapper globalMapper;
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public InvoiceService(InvoiceRepository invoiceRepository, ClientRepository clientRepository, GlobalMapper globalMapper) {
         this.invoiceRepository = invoiceRepository;
@@ -51,6 +57,19 @@ public class InvoiceService {
                 .map(i -> globalMapper.toInvoiceReadDto(i, true))
                 .collect(Collectors.toList());
     }
+
+    public Page<InvoiceReadDTO> getInvoicesPage(int page, String sortField, String sortOrder) {
+        Pageable pageable = PageRequest.of(
+                page,
+                DEFAULT_PAGE_SIZE,
+                sortOrder.equalsIgnoreCase("desc")
+                        ? Sort.by(sortField).descending()
+                        : Sort.by(sortField).ascending()
+        );
+
+        return invoiceRepository.findAll(pageable).map(i -> globalMapper.toInvoiceReadDto(i, true));
+    }
+
 
     public Optional<InvoiceReadDTO> updateInvoiceById(Integer invoiceId, InvoiceUpdateDTO invoiceUpdateDTO) {
         return invoiceRepository.findById(invoiceId).map(existingInvoice -> {

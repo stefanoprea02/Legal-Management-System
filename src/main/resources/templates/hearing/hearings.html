@@ -13,19 +13,39 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Date & Time</th>
-            <th>Address</th>
-            <th>Lawsuit</th>
+            <th>
+                <a th:href="@{'/hearings?page=0&sortField=hearingId&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'hearingId')}}"
+                   class="text-decoration-none">
+                    ID <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'hearingId')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/hearings?page=0&sortField=dateTime&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'dateTime')}}"
+                   class="text-decoration-none">
+                    Date & Time <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'dateTime')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/hearings?page=0&sortField=appointmentAddress&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'appointmentAddress')}}"
+                   class="text-decoration-none">
+                    Address <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'appointmentAddress')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/hearings?page=0&sortField=lawsuit.reason&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'lawsuit.reason')}}"
+                   class="text-decoration-none">
+                    Lawsuit <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'lawsuit.reason')}"></span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="hearing : ${hearings}">
+        <tr th:each="hearing : ${hearings.content}">
             <td th:text="${hearing.hearingId}"></td>
             <td th:text="${#dates.format(hearing.dateTime, 'yyyy-MM-dd HH:mm')}"></td>
             <td th:text="${hearing.appointmentAddress}"></td>
-            <td th:text="${hearing.lawsuit.reason}">
+            <td th:text="${hearing.lawsuit.reason}"></td>
             <td>
                 <a th:href="@{'/hearings/' + ${hearing.hearingId}}" class="btn btn-primary btn-sm">View</a>
                 <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/edit/' + ${hearing.hearingId}}" class="btn btn-warning btn-sm">Edit</a>
@@ -36,7 +56,22 @@
         </tr>
         </tbody>
     </table>
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/create'}" class="btn btn-success">Add New Hearing</a>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <span th:text="'Page ' + (${hearings.number} + 1) + ' of ' + ${hearings.totalPages}"></span>
+        </div>
+        <div>
+            <span th:if="${hearings.hasPrevious()}">
+                <a th:href="@{'/hearings?page=' + (${hearings.number} - 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Previous</a>
+            </span>
+            <span th:if="${hearings.hasNext()}">
+                <a th:href="@{'/hearings?page=' + (${hearings.number} + 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Next</a>
+            </span>
+        </div>
+    </div>
+
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/hearings/create'}" class="btn btn-success mt-4">Add New Hearing</a>
 </main>
 </body>
 </html>

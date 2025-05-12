@@ -10,6 +10,10 @@ import ord.example.LegalManagementSystem.model.Lawsuit;
 import ord.example.LegalManagementSystem.model.Hearing;
 import ord.example.LegalManagementSystem.repository.LawsuitRepository;
 import ord.example.LegalManagementSystem.repository.HearingRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,8 @@ public class HearingService {
     private final HearingRepository hearingRepository;
     private final LawsuitRepository lawsuitRepository;
     private final GlobalMapper globalMapper;
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public HearingService(HearingRepository hearingRepository, LawsuitRepository lawsuitRepository, GlobalMapper globalMapper) {
         this.hearingRepository = hearingRepository;
@@ -56,6 +62,19 @@ public class HearingService {
         return hearingRepository.findAll().stream()
                 .map(h -> globalMapper.toHearingReadDto(h, true))
                 .collect(Collectors.toList());
+    }
+
+    public Page<HearingReadDTO> getHearingsPage(int page, String sortField, String sortOrder) {
+        Pageable pageable = PageRequest.of(
+                page,
+                DEFAULT_PAGE_SIZE,
+                sortOrder.equalsIgnoreCase("desc")
+                        ? Sort.by(sortField).descending()
+                        : Sort.by(sortField).ascending()
+        );
+
+        return hearingRepository.findAll(pageable)
+                .map(h -> globalMapper.toHearingReadDto(h, true));
     }
 
     public Optional<HearingReadDTO> updateHearingById(Integer hearingId, HearingUpdateDTO hearingUpdateDTO) {

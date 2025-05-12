@@ -7,6 +7,7 @@ import ord.example.LegalManagementSystem.dtos.Hearing.HearingUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.HearingNotFoundException;
 import ord.example.LegalManagementSystem.service.HearingService;
 import ord.example.LegalManagementSystem.service.LawsuitService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -61,10 +62,16 @@ public class HearingController {
     }
 
     @GetMapping
-    public String getAllHearings(Model model) {
-        List<HearingReadDTO> hearings = hearingService.getHearings();
+    public String getAllHearings(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortField", defaultValue = "hearingId") String sortField,
+            @RequestParam(value = "sortOrder", defaultValue = "asc") String sortOrder,
+            Model model) {
+        Page<HearingReadDTO> hearings = hearingService.getHearingsPage(page, sortField, sortOrder);
 
         model.addAttribute("hearings", hearings);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "hearing/hearings";
     }
 

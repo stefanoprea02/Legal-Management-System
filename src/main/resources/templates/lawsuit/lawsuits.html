@@ -13,16 +13,41 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Client</th>
-            <th>Reason</th>
-            <th>Opposing Party</th>
-            <th>Hearing</th>
+            <th>
+                <a th:href="@{'/lawsuits?page=0&sortField=lawsuitId&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'lawsuitId')}}"
+                   class="text-decoration-none">
+                    ID <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'lawsuitId')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/lawsuits?page=0&sortField=client.firstName&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'client.firstName')}}"
+                   class="text-decoration-none">
+                    Client <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'client.firstName')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/lawsuits?page=0&sortField=reason&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'reason')}}"
+                   class="text-decoration-none">
+                    Reason <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'reason')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/lawsuits?page=0&sortField=opposingParty&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'opposingParty')}}"
+                   class="text-decoration-none">
+                    Opposing Party <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'opposingParty')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/lawsuits?page=0&sortField=hearing.dateTime&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'hearing.dateTime')}}"
+                   class="text-decoration-none">
+                    Hearing <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'hearing.dateTime')}"></span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="lawsuit : ${lawsuits}">
+        <tr th:each="lawsuit : ${lawsuits.content}">
             <td th:text="${lawsuit.lawsuitId}"></td>
             <td th:text="${lawsuit.client.firstName + ' ' + lawsuit.client.lastName}"></td>
             <td th:text="${lawsuit.reason}"></td>
@@ -39,7 +64,22 @@
         </tr>
         </tbody>
     </table>
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawsuits/create'}" class="btn btn-success">Add New Lawsuit</a>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <span th:text="'Page ' + (${lawsuits.number} + 1) + ' of ' + ${lawsuits.totalPages}"></span>
+        </div>
+        <div>
+            <span th:if="${lawsuits.hasPrevious()}">
+                <a th:href="@{'/lawsuits?page=' + (${lawsuits.number} - 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Previous</a>
+            </span>
+            <span th:if="${lawsuits.hasNext()}">
+                <a th:href="@{'/lawsuits?page=' + (${lawsuits.number} + 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Next</a>
+            </span>
+        </div>
+    </div>
+
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawsuits/create'}" class="btn btn-success mt-4">Add New Lawsuit</a>
 </main>
 </body>
 </html>

@@ -62,7 +62,13 @@
         </tbody>
     </table>
 
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}" class="btn btn-warning mt-3">Edit Lawsuit</a>
+    <div class="d-flex align-items-center mt-3 gap-2" sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')">
+        <a th:href="@{'/lawsuits/edit/' + ${lawsuit.lawsuitId}}"
+           class="btn btn-warning">Edit Lawsuit</a>
+        <form th:action="@{'/lawsuits/delete/' + ${lawsuit.lawsuitId}}" method="post">
+            <button type="submit" class="btn btn-danger">Delete Lawsuit</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

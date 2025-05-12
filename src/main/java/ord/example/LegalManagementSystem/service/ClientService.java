@@ -5,6 +5,10 @@ import ord.example.LegalManagementSystem.dtos.Client.ClientReadDTO;
 import ord.example.LegalManagementSystem.mappers.GlobalMapper;
 import ord.example.LegalManagementSystem.model.Client;
 import ord.example.LegalManagementSystem.repository.ClientRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.stream.Collectors;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final GlobalMapper globalMapper;
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public ClientService(ClientRepository clientRepository, GlobalMapper globalMapper) {
         this.clientRepository = clientRepository;
@@ -38,6 +44,19 @@ public class ClientService {
         return clientRepository.findAll().stream()
                 .map(c -> globalMapper.toClientReadDto(c, true, true))
                 .collect(Collectors.toList());
+    }
+
+    public Page<ClientReadDTO> getClientsPage(int page, String sortField, String sortOrder) {
+        Pageable pageable = PageRequest.of(
+                page,
+                DEFAULT_PAGE_SIZE,
+                sortOrder.equalsIgnoreCase("desc")
+                        ? Sort.by(sortField).descending()
+                        : Sort.by(sortField).ascending()
+        );
+
+        return clientRepository.findAll(pageable)
+                .map(c -> globalMapper.toClientReadDto(c, true, true));
     }
 
     public Optional<ClientReadDTO> updateClientById(Integer clientId, ClientCUDTO clientCUDTO) {

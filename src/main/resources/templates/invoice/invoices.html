@@ -13,15 +13,35 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Amount</th>
-            <th>Due Date</th>
-            <th>Client</th>
+            <th>
+                <a th:href="@{'/invoices?page=0&sortField=invoiceId&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'invoiceId')}}"
+                   class="text-decoration-none">
+                    ID <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'invoiceId')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/invoices?page=0&sortField=amount&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'amount')}}"
+                   class="text-decoration-none">
+                    Amount <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'amount')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/invoices?page=0&sortField=dueDate&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'dueDate')}}"
+                   class="text-decoration-none">
+                    Due Date <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'dueDate')}"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/invoices?page=0&sortField=client.firstName&sortOrder=' + ${sortUtil.nextOrder(sortField, sortOrder, 'client.firstName')}}"
+                   class="text-decoration-none">
+                    Client <span th:text="${sortUtil.sortArrow(sortField, sortOrder, 'client.firstName')}"></span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="invoice : ${invoices}">
+        <tr th:each="invoice : ${invoices.content}">
             <td th:text="${invoice.invoiceId}"></td>
             <td th:text="${invoice.amount}"></td>
             <td th:text="${#dates.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
@@ -36,7 +56,22 @@
         </tr>
         </tbody>
     </table>
-    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/invoices/create'}" class="btn btn-success">Add New Invoice</a>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <span th:text="'Page ' + (${invoices.number} + 1) + ' of ' + ${invoices.totalPages}"></span>
+        </div>
+        <div>
+            <span th:if="${invoices.hasPrevious()}">
+                <a th:href="@{'/invoices?page=' + (${invoices.number} - 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Previous</a>
+            </span>
+            <span th:if="${invoices.hasNext()}">
+                <a th:href="@{'/invoices?page=' + (${invoices.number} + 1) + '&sortField=' + ${sortField} + '&sortOrder=' + ${sortOrder}}" class="btn btn-secondary btn-sm">Next</a>
+            </span>
+        </div>
+    </div>
+
+    <a sec:authorize="hasRole('ADMIN') or @environment.acceptsProfiles('h2')" th:href="@{'/invoices/create'}" class="btn btn-success mt-4">Add New Invoice</a>
 </main>
 </body>
 </html>
