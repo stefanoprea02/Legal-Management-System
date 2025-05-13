@@ -1,4 +1,4 @@
-package ord.example.LegalManagementSystem.configuration;
+package ord.example.LegalManagementSystem.handlers;
 
 import ord.example.LegalManagementSystem.util.SortUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
