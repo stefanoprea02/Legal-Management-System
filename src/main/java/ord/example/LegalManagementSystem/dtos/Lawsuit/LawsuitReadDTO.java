@@ -16,5 +16,6 @@ public class LawsuitReadDTO {
     private String reason;
     private String opposingParty;
     private HearingReadDTO hearing;
+    private byte[] lawsuitData;
     private List<LawyerLawsuitReadDTO> lawyerLawsuits;
 }

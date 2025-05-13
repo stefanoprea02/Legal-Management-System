@@ -10,6 +10,7 @@ import ord.example.LegalManagementSystem.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,7 +35,7 @@ public class GlobalMapper {
 
         if (expandLawsuits && client.getLawsuits() != null) {
             List<LawsuitReadDTO> lawsuitDtos = client.getLawsuits().stream()
-                    .map(lawsuit -> toLawsuitReadDto(lawsuit, false, false, false))
+                    .map(lawsuit -> toLawsuitReadDto(lawsuit, false, false, false, false))
                     .collect(Collectors.toList());
             dto.setLawsuits(lawsuitDtos);
         }
@@ -53,7 +54,7 @@ public class GlobalMapper {
         dto.setAppointmentAddress(hearing.getAppointmentAddress());
 
         if (expandLawsuit && hearing.getLawsuit() != null) {
-            LawsuitReadDTO lawsuitDto = toLawsuitReadDto(hearing.getLawsuit(), false, false, false);
+            LawsuitReadDTO lawsuitDto = toLawsuitReadDto(hearing.getLawsuit(), false, false, false, false);
             dto.setLawsuit(lawsuitDto);
         }
 
@@ -78,7 +79,11 @@ public class GlobalMapper {
         return dto;
     }
 
-    public LawsuitReadDTO toLawsuitReadDto(Lawsuit lawsuit, boolean expandLawyerLawsuit, boolean expandHearing, boolean expandClient) {
+    public LawsuitReadDTO toLawsuitReadDto(Lawsuit lawsuit,
+                                           boolean expandLawyerLawsuit,
+                                           boolean expandHearing,
+                                           boolean expandClient,
+                                           boolean includeLawsuitData) {
         if (lawsuit == null) {
             return null;
         }
@@ -105,6 +110,10 @@ public class GlobalMapper {
             dto.setClient(clientReadDTO);
         }
 
+        if (includeLawsuitData && lawsuit.getLawsuitData() != null) {
+            dto.setLawsuitData(lawsuit.getLawsuitData());
+        }
+
         return dto;
     }
 
@@ -122,7 +131,7 @@ public class GlobalMapper {
         }
 
         if(expandLawsuit && lawyerLawsuit.getLawsuit() != null) {
-            dto.setLawsuit(toLawsuitReadDto(lawyerLawsuit.getLawsuit(),false, true, true));
+            dto.setLawsuit(toLawsuitReadDto(lawyerLawsuit.getLawsuit(),false, true, true, false));
         }
 
         return dto;

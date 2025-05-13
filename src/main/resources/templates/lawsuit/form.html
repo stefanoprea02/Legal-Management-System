@@ -10,7 +10,7 @@
 <main layout:fragment="content" class="container mt-4">
     <h1 class="mb-4" th:text="${formAction == '/lawsuits' ? 'Create Lawsuit' : 'Edit Lawsuit'}"></h1>
 
-    <form th:action="@{${formAction}}" th:object="${lawsuit}" method="post">
+    <form th:action="@{${formAction}}" th:object="${lawsuit}" method="post" enctype="multipart/form-data">
         <div class="mb-3" th:if="${formAction == '/lawsuits'}">
             <label for="clientId" class="form-label">Client</label>
             <select id="clientId" th:field="*{clientId}" class="form-select" required>
@@ -42,6 +42,11 @@
                         th:selected="${lawyerIds != null && lawyerIds.contains(lawyer.lawyerId)}"></option>
             </select>
             <div class="text-danger" th:if="${#fields.hasErrors('lawyerIds')}" th:errors="*{lawyerIds}">Lawyer error</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lawsuitData" class="form-label">Upload Lawsuit PDF (optional)</label>
+            <input id="lawsuitData" name="lawsuitData" type="file" class="form-control" accept="application/pdf"/>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>

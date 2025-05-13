@@ -1,5 +1,6 @@
 package ord.example.LegalManagementSystem.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitUpdateDTO;
@@ -20,10 +21,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class LawsuitService {
     private final LawsuitRepository lawsuitRepository;
@@ -43,7 +47,7 @@ public class LawsuitService {
     }
 
     @Transactional
-    public LawsuitReadDTO saveLawsuite(LawsuitCreateDTO lawsuitCreateDTO) {
+    public LawsuitReadDTO saveLawsuite(LawsuitCreateDTO lawsuitCreateDTO, MultipartFile file) {
         Lawsuit lawsuit = new Lawsuit();
         lawsuit.setReason(lawsuitCreateDTO.getReason());
         lawsuit.setOpposingParty(lawsuitCreateDTO.getOpposingParty());
@@ -52,6 +56,15 @@ public class LawsuitService {
                 .orElseThrow(() -> new ClientNotFoundException("Client with ID " + lawsuitCreateDTO.getClientId() + " not found"));
 
         lawsuit.setClient(client);
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                lawsuit.setLawsuitData(file.getBytes());
+            } catch (IOException e) {
+                log.error("Error while uploading PDF file: {}", e.getMessage());
+                throw new RuntimeException("Failed to upload PDF file", e);
+            }
+        }
 
         Lawsuit savedLawsuit = lawsuitRepository.save(lawsuit);
 
@@ -69,17 +82,17 @@ public class LawsuitService {
             }
         }
 
-        return globalMapper.toLawsuitReadDto(savedLawsuit, true, true, true);
+        return globalMapper.toLawsuitReadDto(savedLawsuit, true, true, true, false);
     }
 
     public Optional<LawsuitReadDTO> getLawsuitById(Integer lawsuitId) {
         return lawsuitRepository.findById(lawsuitId)
-                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true));
+                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true, true));
     }
 
     public List<LawsuitReadDTO> getLawsuits() {
         return lawsuitRepository.findAll().stream()
-                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true))
+                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true, false))
                 .collect(Collectors.toList());
     }
 
@@ -93,14 +106,24 @@ public class LawsuitService {
         );
 
         return lawsuitRepository.findAll(pageable)
-                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true));
+                .map(l -> globalMapper.toLawsuitReadDto(l, true, true, true, false));
     }
 
     @Transactional
-    public Optional<LawsuitReadDTO> updateLawsuitById(Integer lawsuitId, LawsuitUpdateDTO lawsuitUpdateDTO) {
+    public Optional<LawsuitReadDTO> updateLawsuitById(Integer lawsuitId, LawsuitUpdateDTO lawsuitUpdateDTO, MultipartFile file) {
         return lawsuitRepository.findById(lawsuitId).map(existingLawsuit -> {
             existingLawsuit.setReason(lawsuitUpdateDTO.getReason());
             existingLawsuit.setOpposingParty(lawsuitUpdateDTO.getOpposingParty());
+
+            if (file != null && !file.isEmpty()) {
+                log.info("Uploading new PDF file for lawsuit ID: {}", lawsuitId);
+                try {
+                    existingLawsuit.setLawsuitData(file.getBytes());
+                } catch (IOException e) {
+                    log.error("Error while uploading PDF file: {}", e.getMessage());
+                    throw new RuntimeException("Failed to upload PDF file", e);
+                }
+            }
 
             Set<Integer> newLawyerIds = lawsuitUpdateDTO.getLawyerIds() != null
                     ? new HashSet<>(lawsuitUpdateDTO.getLawyerIds())
@@ -128,7 +151,7 @@ public class LawsuitService {
                 }
             }
 
-            return globalMapper.toLawsuitReadDto(lawsuitRepository.save(existingLawsuit), true, true, true);
+            return globalMapper.toLawsuitReadDto(lawsuitRepository.save(existingLawsuit), true, true, true, false);
         });
     }
 

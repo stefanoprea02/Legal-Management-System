@@ -29,6 +29,8 @@ public class Lawsuit {
     @Size(max = 50)
     private String opposingParty;
 
+    private byte[] lawsuitData;
+
     @OneToOne(mappedBy = "lawsuit", cascade = CascadeType.ALL)
     private Hearing hearing;
 

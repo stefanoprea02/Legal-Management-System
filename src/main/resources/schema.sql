@@ -52,6 +52,7 @@ CREATE TABLE Lawsuit(
                         client_id INT NOT NULL,
                         reason VARCHAR(50) NOT NULL,
                         opposing_party VARCHAR(50) NOT NULL,
+                        lawsuit_data BLOB,
                         FOREIGN KEY(client_id) REFERENCES `Client`(client_id)
 );
 
