@@ -89,8 +89,10 @@ public class ClientController {
 
     @PostMapping("/{clientId}")
     public String updateClient(@PathVariable Integer clientId, @Valid @ModelAttribute("client") ClientCUDTO clientCUDTO,
-                               BindingResult bindingResult) {
+                               BindingResult bindingResult,
+                               Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("formAction", "/clients/" + clientId);
             return "client/form";
         }
 

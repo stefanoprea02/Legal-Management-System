@@ -94,8 +94,10 @@ public class HearingController {
     @PostMapping("/{hearingId}")
     public String updateHearing(@PathVariable Integer hearingId,
                                 @Valid @ModelAttribute("hearing") HearingUpdateDTO hearingUpdateDTO,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("formAction", "/hearings/" + hearingId);
             return "hearing/form";
         }
 

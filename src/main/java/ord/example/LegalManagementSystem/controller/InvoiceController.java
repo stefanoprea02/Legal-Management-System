@@ -95,8 +95,11 @@ public class InvoiceController {
     @PostMapping("/{invoiceId}")
     public String updateInvoice(@PathVariable Integer invoiceId,
                                 @Valid @ModelAttribute("invoice") InvoiceUpdateDTO invoiceUpdateDTO,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("clients", clientService.getClients());
+            model.addAttribute("formAction", "/invoices/" + invoiceId);
             return "invoice/form";
         }
 

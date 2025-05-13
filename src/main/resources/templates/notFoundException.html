@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
+<head>
+    <title>Not Found</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2>Resource Not Found</h2>
+        <p th:text="${exception.message}">The requested resource could not be found.</p>
+    </div>
+</main>
+
+</body>
+</html>

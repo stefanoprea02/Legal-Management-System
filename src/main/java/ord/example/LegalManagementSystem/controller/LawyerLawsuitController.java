@@ -101,8 +101,12 @@ public class LawyerLawsuitController {
     @PostMapping("/{lawyerLawsuitId}")
     public String updateLawyerLawsuit(@PathVariable Integer lawyerLawsuitId,
                                       @Valid @ModelAttribute("lawyerLawsuit") LawyerLawsuitUpdateDTO lawyerLawsuitUpdateDTO,
-                                      BindingResult bindingResult) {
+                                      BindingResult bindingResult,
+                                      Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("lawyers", lawyerService.getLawyers());
+            model.addAttribute("lawsuits", lawsuitService.getLawsuits());
+            model.addAttribute("formAction", "/lawyer-lawsuits/" + lawyerLawsuitId);
             return "lawyerLawsuit/form";
         }
 
