@@ -35,8 +35,11 @@ public class ClientController {
     }
 
     @PostMapping
-    public String createClient(@Valid @ModelAttribute("client") ClientCUDTO clientCUDTO, BindingResult bindingResult) {
+    public String createClient(@Valid @ModelAttribute("client") ClientCUDTO clientCUDTO,
+                               BindingResult bindingResult,
+                               Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("formAction", "/clients");
             return "client/form";
         }
 

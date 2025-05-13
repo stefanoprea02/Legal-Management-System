@@ -39,8 +39,11 @@ public class InvoiceController {
 
     @PostMapping
     public String createInvoice(@Valid @ModelAttribute("invoice") InvoiceCreateDTO invoiceCreateDTO,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("clients", clientService.getClients());
+            model.addAttribute("formAction", "/invoices");
             return "invoice/form";
         }
 

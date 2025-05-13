@@ -42,8 +42,11 @@ public class LawyerController {
 
     @PostMapping
     public String createLawyer(@Valid @ModelAttribute("lawyer") LawyerCUDTO lawyerCUDTO,
-                               BindingResult bindingResult) {
+                               BindingResult bindingResult,
+                               Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("lawsuits", lawsuitService.getLawsuits());
+            model.addAttribute("formAction", "/lawyers");
             return "lawyer/form";
         }
 

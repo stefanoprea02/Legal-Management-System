@@ -39,8 +39,11 @@ public class HearingController {
 
     @PostMapping
     public String createHearing(@Valid @ModelAttribute("hearing") HearingCreateDTO hearingCreateDTO,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("lawsuits", lawsuitService.getLawsuits());
+            model.addAttribute("formAction", "/hearings");
             return "hearing/form";
         }
 
