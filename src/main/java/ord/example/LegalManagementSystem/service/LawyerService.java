@@ -46,7 +46,7 @@ public class LawyerService {
         lawyer.setHireDate(lawyerCUDTO.getHireDate());
         lawyer.setHourlyRate(lawyerCUDTO.getHourlyRate());
 
-        Lawyer savedLawyer = lawyerRepository.save(lawyer);
+        List<LawyerLawsuit> lawyerLawsuits = new ArrayList<>();
 
         if (lawyerCUDTO.getLawsuitIds() != null) {
             for (Integer lawsuitId : lawyerCUDTO.getLawsuitIds()) {
@@ -55,14 +55,16 @@ public class LawyerService {
 
                 LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
                 lawyerLawsuit.setLawsuit(lawsuit);
-                lawyerLawsuit.setLawyer(savedLawyer);
+                lawyerLawsuit.setLawyer(lawyer);
                 lawyerLawsuit.setHoursWorked(0);
 
-                lawyerLawsuitRepository.save(lawyerLawsuit);
+                lawyerLawsuits.add(lawyerLawsuit);
             }
         }
 
-        return globalMapper.toLawyerReadDto(savedLawyer, true);
+        lawyer.setLawyerLawsuits(lawyerLawsuits);
+
+        return globalMapper.toLawyerReadDto(lawyerRepository.save(lawyer), true);
     }
 
     public Optional<LawyerReadDTO> getLawyerById(Integer lawyerId) {

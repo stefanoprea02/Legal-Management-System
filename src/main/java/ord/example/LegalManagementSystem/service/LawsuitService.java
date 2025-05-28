@@ -47,7 +47,7 @@ public class LawsuitService {
     }
 
     @Transactional
-    public LawsuitReadDTO saveLawsuite(LawsuitCreateDTO lawsuitCreateDTO, MultipartFile file) {
+    public LawsuitReadDTO saveLawsuit(LawsuitCreateDTO lawsuitCreateDTO, MultipartFile file) {
         Lawsuit lawsuit = new Lawsuit();
         lawsuit.setReason(lawsuitCreateDTO.getReason());
         lawsuit.setOpposingParty(lawsuitCreateDTO.getOpposingParty());
@@ -66,7 +66,7 @@ public class LawsuitService {
             }
         }
 
-        Lawsuit savedLawsuit = lawsuitRepository.save(lawsuit);
+        List<LawyerLawsuit> lawyerLawsuits = new ArrayList<>();
 
         if (lawsuitCreateDTO.getLawyerIds() != null) {
             for (Integer lawyerId : lawsuitCreateDTO.getLawyerIds()) {
@@ -74,15 +74,17 @@ public class LawsuitService {
                         .orElseThrow(() -> new LawyerNotFoundException("Lawyer with ID " + lawyerId + " not found."));
 
                 LawyerLawsuit lawyerLawsuit = new LawyerLawsuit();
-                lawyerLawsuit.setLawsuit(savedLawsuit);
+                lawyerLawsuit.setLawsuit(lawsuit);
                 lawyerLawsuit.setLawyer(lawyer);
                 lawyerLawsuit.setHoursWorked(0);
 
-                lawyerLawsuitRepository.save(lawyerLawsuit);
+                lawyerLawsuits.add(lawyerLawsuit);
             }
         }
 
-        return globalMapper.toLawsuitReadDto(savedLawsuit, true, true, true, false);
+        lawsuit.setLawyerLawsuits(lawyerLawsuits);
+
+        return globalMapper.toLawsuitReadDto(lawsuitRepository.save(lawsuit), true, true, true, false);
     }
 
     public Optional<LawsuitReadDTO> getLawsuitById(Integer lawsuitId) {

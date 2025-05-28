@@ -27,4 +27,14 @@ public class GlobalExceptionHandler {
         modelAndView.setViewName("notFoundException");
         return modelAndView;
     }
+
+    @ExceptionHandler({
+            LawsuitHasHearingException.class
+    })
+    public ModelAndView handlerException(Exception exception){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.getModel().put("exception",exception);
+        modelAndView.setViewName("exception");
+        return modelAndView;
+    }
 }

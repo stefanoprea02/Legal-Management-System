@@ -1,6 +1,5 @@
 package ord.example.LegalManagementSystem.controller;
 
-import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
@@ -14,7 +13,6 @@ import ord.example.LegalManagementSystem.service.LawyerService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,7 +60,7 @@ public class LawsuitController {
             return "lawsuit/form";
         }
 
-        LawsuitReadDTO savedLawsuit = lawsuitService.saveLawsuite(lawsuitCreateDTO, file);
+        LawsuitReadDTO savedLawsuit = lawsuitService.saveLawsuit(lawsuitCreateDTO, file);
 
         return "redirect:/lawsuits/" + savedLawsuit.getLawsuitId();
     }

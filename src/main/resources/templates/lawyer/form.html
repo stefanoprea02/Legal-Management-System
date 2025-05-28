@@ -57,7 +57,7 @@
             <label for="lawsuitIds" class="form-label">Lawsuits</label>
             <select id="lawsuitIds" th:field="*{lawsuitIds}" class="form-select" multiple>
                 <option th:each="lawsuit : ${lawsuits}" th:value="${lawsuit.lawsuitId}"
-                        th:text="${lawsuit.reason}"
+                        th:text="${lawsuit.lawsuitId}"
                         th:selected="${lawsuitIds != null && lawsuitIds.contains(lawsuit.lawsuitId)}"></option>
             </select>
             <div class="text-danger" th:if="${#fields.hasErrors('lawsuitIds')}" th:errors="*{lawsuitIds}">Lawsuit error</div>
