@@ -4,11 +4,12 @@ import ord.example.LegalManagementSystem.service.security.JpaUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 
 @Configuration
 @Profile("mysql")
@@ -41,11 +42,12 @@ public class SecurityJpaConfig {
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/login")
+                                .defaultSuccessUrl("/", true)
                                 .permitAll()
                                 .loginProcessingUrl("/perform_login")
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access_denied"))
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .build();
     }
 }
