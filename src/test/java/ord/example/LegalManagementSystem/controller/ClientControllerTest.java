@@ -1,36 +1,34 @@
 package ord.example.LegalManagementSystem.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ord.example.LegalManagementSystem.dtos.Client.ClientCUDTO;
 import ord.example.LegalManagementSystem.dtos.Client.ClientReadDTO;
 import ord.example.LegalManagementSystem.service.ClientService;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class ClientControllerTest {
+@WebMvcTest(ClientController.class)
+@ActiveProfiles("h2")
+@AutoConfigureMockMvc(addFilters = false)
+class ClientControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -38,171 +36,172 @@ public class ClientControllerTest {
     private ClientService clientService;
 
     @Test
-    public void testCreateClient_success() throws Exception {
-        ClientCUDTO request = new ClientCUDTO();
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setClientAddress("123 Main Street");
-
-        ClientReadDTO response = new ClientReadDTO();
-        response.setClientId(1);
-        response.setFirstName("John");
-        response.setLastName("Doe");
-        response.setClientAddress("123 Main Street");
-
-        Mockito.when(clientService.saveClient(any(ClientCUDTO.class))).thenReturn(response);
-
-        mockMvc.perform(post("/clients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.clientId").value(1))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.clientAddress").value("123 Main Street"));
-
-        Mockito.verify(clientService, times(1)).saveClient(any(ClientCUDTO.class));
-    }
-
-    @Test
-    public void testCreateClient_validationError() throws Exception {
-        ClientCUDTO request = new ClientCUDTO();
-        request.setFirstName("");
-        request.setLastName("Doe");
-        request.setClientAddress("123 Main Street");
-
-        mockMvc.perform(post("/clients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
-                        .andExpect(status().isBadRequest());
-
-        Mockito.verifyNoInteractions(clientService);
-    }
-
-    @Test
-    public void testGetClientById_success() throws Exception {
-        ClientReadDTO response = new ClientReadDTO();
-        response.setClientId(1);
-        response.setFirstName("John");
-        response.setLastName("Doe");
-        response.setClientAddress("123 Main Street");
-
-        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.of(response));
-
-        mockMvc.perform(get("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+    void testGetCreateClientForm_returnsFormView() throws Exception {
+        mockMvc.perform(get("/clients/create"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clientId").value(1))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.clientAddress").value("123 Main Street"));
-
-        Mockito.verify(clientService, times(1)).getClientById(1);
+                .andExpect(view().name("client/form"))
+                .andExpect(model().attributeExists("client"))
+                .andExpect(model().attribute("formAction", "/clients"));
     }
 
     @Test
-    public void testGetClientById_notFound() throws Exception {
+    void testCreateClient_successRedirects() throws Exception {
+        ClientReadDTO savedClient = new ClientReadDTO();
+        savedClient.setClientId(1);
+
+        Mockito.when(clientService.saveClient(any(ClientCUDTO.class))).thenReturn(savedClient);
+
+        mockMvc.perform(post("/clients")
+                        .param("firstName", "John")
+                        .param("lastName", "Doe")
+                        .param("clientAddress", "123 Main Street"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/clients/1"));
+    }
+
+    @Test
+    void testCreateClient_validationError() throws Exception {
+        ClientReadDTO savedClient = new ClientReadDTO();
+        savedClient.setClientId(1);
+
+        Mockito.when(clientService.saveClient(any(ClientCUDTO.class))).thenReturn(savedClient);
+
+        mockMvc.perform(post("/clients")
+                        .param("firstName", "John")
+                        .param("lastName", "Doe"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("client/form"))
+                .andExpect(model().attribute("formAction", "/clients"));
+    }
+
+    @Test
+    void testGetClientById_found_returnsView() throws Exception {
+        ClientReadDTO dto = new ClientReadDTO();
+        dto.setClientId(1);
+        dto.setFirstName("John");
+
+        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.of(dto));
+
+        mockMvc.perform(get("/clients/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("client/client"))
+                .andExpect(model().attributeExists("client"));
+    }
+
+    @Test
+    void testGetClientById_notFound_throwsException() throws Exception {
         Mockito.when(clientService.getClientById(1)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-
-        Mockito.verify(clientService, times(1)).getClientById(1);
+        mockMvc.perform(get("/clients/1"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("notFoundException"));
     }
 
     @Test
-    public void testGetAllClients_success() throws Exception {
-        ClientReadDTO client1 = new ClientReadDTO();
-        client1.setClientId(1);
-        client1.setFirstName("John");
-        client1.setLastName("Doe");
+    void testGetAllClients_returnsClientsView() throws Exception {
+        ClientReadDTO dto = new ClientReadDTO();
+        dto.setClientId(1);
+        dto.setFirstName("John");
+        dto.setInvoices(List.of());
+        dto.setLawsuits(List.of());
 
-        ClientReadDTO client2 = new ClientReadDTO();
-        client2.setClientId(2);
-        client2.setFirstName("Jane");
-        client2.setLastName("Smith");
+        Page<ClientReadDTO> page = new PageImpl<>(List.of(dto));
 
-        List<ClientReadDTO> clients = Arrays.asList(client1, client2);
+        Mockito.when(clientService.getClientsPage(0, "clientId", "asc")).thenReturn(page);
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
-
-        mockMvc.perform(get("/clients")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/clients"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].clientId").value(1))
-                .andExpect(jsonPath("$[0].firstName").value("John"))
-                .andExpect(jsonPath("$[1].clientId").value(2))
-                .andExpect(jsonPath("$[1].firstName").value("Jane"));
-
-        Mockito.verify(clientService, times(1)).getClients();
+                .andExpect(view().name("client/clients"))
+                .andExpect(model().attributeExists("clients"))
+                .andExpect(model().attribute("sortField", "clientId"))
+                .andExpect(model().attribute("sortOrder", "asc"));
     }
 
     @Test
-    public void testUpdateClient_success() throws Exception {
-        ClientCUDTO request = new ClientCUDTO();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setClientAddress("456 Elm Street");
+    void testGetEditClientForm_found_returnsFormView() throws Exception {
+        ClientReadDTO dto = new ClientReadDTO();
+        dto.setClientId(1);
 
-        ClientReadDTO response = new ClientReadDTO();
-        response.setClientId(1);
-        response.setFirstName("Jane");
-        response.setLastName("Doe");
-        response.setClientAddress("456 Elm Street");
+        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.of(dto));
 
-        Mockito.when(clientService.updateClientById(eq(1), any(ClientCUDTO.class))).thenReturn(Optional.of(response));
-
-        mockMvc.perform(put("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
+        mockMvc.perform(get("/clients/edit/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clientId").value(1))
-                .andExpect(jsonPath("$.firstName").value("Jane"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.clientAddress").value("456 Elm Street"));
-
-        Mockito.verify(clientService, times(1)).updateClientById(eq(1), any(ClientCUDTO.class));
+                .andExpect(view().name("client/form"))
+                .andExpect(model().attribute("client", dto))
+                .andExpect(model().attribute("formAction", "/clients/1"));
     }
 
     @Test
-    public void testUpdateClient_notFound() throws Exception {
-        ClientCUDTO request = new ClientCUDTO();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setClientAddress("456 Elm Street");
+    void testGetEditClientForm_notFound_throwsException() throws Exception {
+        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.empty());
 
-        Mockito.when(clientService.updateClientById(eq(1), any(ClientCUDTO.class))).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().isNotFound());
-
-        Mockito.verify(clientService, times(1)).updateClientById(eq(1), any(ClientCUDTO.class));
+        mockMvc.perform(get("/clients/edit/1"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("notFoundException"));
     }
 
     @Test
-    public void testDeleteClient_success() throws Exception {
-        Mockito.doNothing().when(clientService).deleteClientById(1);
+    void testUpdateClient_successRedirects() throws Exception {
+        ClientReadDTO updated = new ClientReadDTO();
+        updated.setClientId(1);
+        updated.setFirstName("Updated");
+        updated.setLastName("Name");
+        updated.setClientAddress("Updated Address");
 
-        mockMvc.perform(delete("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        Mockito.when(clientService.updateClientById(eq(1), any(ClientCUDTO.class)))
+                .thenReturn(Optional.of(updated));
 
-        Mockito.verify(clientService, times(1)).deleteClientById(1);
+        mockMvc.perform(post("/clients/1")
+                        .param("firstName", "Updated")
+                        .param("lastName", "Name")
+                        .param("clientAddress", "Updated Address"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/clients/1"));
     }
 
     @Test
-    public void testDeleteClient_notFound() throws Exception {
-        Mockito.doThrow(new RuntimeException("Not Found")).when(clientService).deleteClientById(1);
+    void testUpdateClient_validationError() throws Exception {
+        mockMvc.perform(post("/clients/1")
+                        .param("firstName", "Updated")
+                        .param("lastName", "Name"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("client/form"))
+                .andExpect(model().attribute("formAction", "/clients/1"));
+    }
 
-        mockMvc.perform(delete("/clients/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+    @Test
+    void testUpdateClient_clientNotFound() throws Exception {
+        Mockito.when(clientService.updateClientById(eq(1), any(ClientCUDTO.class)))
+                .thenReturn(Optional.empty());
 
-        Mockito.verify(clientService, times(1)).deleteClientById(1);
+        mockMvc.perform(post("/clients/1")
+                        .param("firstName", "Updated")
+                        .param("lastName", "Name")
+                        .param("clientAddress", "Updated Address"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("notFoundException"));
+    }
+
+    @Test
+    void testDeleteClient_successRedirects() throws Exception {
+        ClientReadDTO dto = new ClientReadDTO();
+        dto.setClientId(1);
+
+        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.of(dto));
+
+        mockMvc.perform(post("/clients/delete/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/clients"));
+
+        Mockito.verify(clientService).deleteClientById(1);
+    }
+
+    @Test
+    void testDeleteClient_notFound_throwsException() throws Exception {
+        Mockito.when(clientService.getClientById(1)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/clients/delete/1"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("notFoundException"));
     }
 }
-

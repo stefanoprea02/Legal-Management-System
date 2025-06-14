@@ -1,197 +1,215 @@
 package ord.example.LegalManagementSystem.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingReadDTO;
 import ord.example.LegalManagementSystem.dtos.Hearing.HearingUpdateDTO;
+import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.service.HearingService;
+import ord.example.LegalManagementSystem.service.LawsuitService;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(HearingController.class)
+@ActiveProfiles("h2")
+@AutoConfigureMockMvc(addFilters = false)
 class HearingControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private HearingService hearingService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @MockitoBean
+    private LawsuitService lawsuitService;
 
     @Test
-    void testCreateHearing_success() throws Exception {
-        HearingCreateDTO request = new HearingCreateDTO();
-        request.setLawsuitId(1);
-        request.setDateTime(Timestamp.valueOf("2025-01-01 10:00:00"));
-        request.setAppointmentAddress("123 Court St");
+    void testGetCreateHearingForm_returnsFormView() throws Exception {
+        Mockito.when(lawsuitService.getLawsuits()).thenReturn(List.of());
 
-        HearingReadDTO response = new HearingReadDTO();
-        response.setHearingId(1);
-        response.setDateTime(Timestamp.valueOf("2025-01-01 08:00:00"));
-        response.setAppointmentAddress("123 Court St");
+        mockMvc.perform(get("/hearings/create"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hearing/form"))
+                .andExpect(model().attributeExists("hearing"))
+                .andExpect(model().attributeExists("lawsuits"))
+                .andExpect(model().attribute("formAction", "/hearings"));
+    }
 
-        Mockito.when(hearingService.saveHearing(any(HearingCreateDTO.class))).thenReturn(response);
+    @Test
+    void testCreateHearing_successRedirects() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
+
+        Mockito.when(hearingService.saveHearing(any(HearingCreateDTO.class))).thenReturn(dto);
 
         mockMvc.perform(post("/hearings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.hearingId").value(1))
-                .andExpect(jsonPath("$.appointmentAddress").value("123 Court St"))
-                .andExpect(jsonPath("$.dateTime").value("2025-01-01T06:00:00.000+00:00"));
-
-        Mockito.verify(hearingService, times(1)).saveHearing(any(HearingCreateDTO.class));
+                        .param("dateTime", "2023-01-01T12:00")
+                        .param("appointmentAddress", "Courtroom A")
+                        .param("lawsuitId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/hearings/1"))
+                .andExpect(redirectedUrl("/hearings/1"));
     }
 
     @Test
-    void testGetHearingById_found() throws Exception {
-        int hearingId = 1;
+    void testCreateHearing_validationError() throws Exception {
+        Mockito.when(lawsuitService.getLawsuits()).thenReturn(List.of());
 
-        HearingReadDTO response = new HearingReadDTO();
-        response.setHearingId(hearingId);
-        response.setDateTime(Timestamp.valueOf("2025-01-01 10:00:00"));
-        response.setAppointmentAddress("123 Court St");
-
-        Mockito.when(hearingService.getHearingById(hearingId)).thenReturn(Optional.of(response));
-
-        mockMvc.perform(get("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/hearings")
+                        .param("appointmentAddress", "Courtroom A"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.hearingId").value(1))
-                .andExpect(jsonPath("$.appointmentAddress").value("123 Court St"))
-                .andExpect(jsonPath("$.dateTime").value("2025-01-01T08:00:00.000+00:00"));
-
-        Mockito.verify(hearingService, times(1)).getHearingById(hearingId);
+                .andExpect(view().name("hearing/form"))
+                .andExpect(model().attribute("formAction", "/hearings"))
+                .andExpect(model().attributeExists("lawsuits"));
     }
 
     @Test
-    void testGetHearingById_notFound() throws Exception {
-        int hearingId = 1;
+    void testGetHearingById_found_returnsView() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
 
-        Mockito.when(hearingService.getHearingById(hearingId)).thenReturn(Optional.empty());
+        LawsuitReadDTO lawsuitReadDTO = new LawsuitReadDTO();
+        lawsuitReadDTO.setLawsuitId(1);
+        lawsuitReadDTO.setReason("12345");
+        dto.setLawsuit(lawsuitReadDTO);
 
-        mockMvc.perform(get("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.of(dto));
 
-        Mockito.verify(hearingService, times(1)).getHearingById(hearingId);
-    }
-
-    @Test
-    void testGetAllHearings_success() throws Exception {
-        HearingReadDTO hearing1 = new HearingReadDTO();
-        hearing1.setHearingId(1);
-        hearing1.setDateTime(Timestamp.valueOf("2025-01-01 10:00:00"));
-        hearing1.setAppointmentAddress("123 Court St");
-
-        HearingReadDTO hearing2 = new HearingReadDTO();
-        hearing2.setHearingId(2);
-        hearing2.setDateTime(Timestamp.valueOf("2025-02-01 11:00:00"));
-        hearing2.setAppointmentAddress("456 Main St");
-
-        List<HearingReadDTO> response = Arrays.asList(hearing1, hearing2);
-
-        Mockito.when(hearingService.getHearings()).thenReturn(response);
-
-        mockMvc.perform(get("/hearings")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/hearings/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].hearingId").value(1))
-                .andExpect(jsonPath("$[1].hearingId").value(2));
-
-        Mockito.verify(hearingService, times(1)).getHearings();
+                .andExpect(view().name("hearing/hearing"))
+                .andExpect(model().attribute("hearing", dto));
     }
 
     @Test
-    void testUpdateHearing_success() throws Exception {
-        int hearingId = 1;
+    void testGetHearingById_notFound_throwsException() throws Exception {
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.empty());
 
-        HearingUpdateDTO request = new HearingUpdateDTO();
-        request.setDateTime(Timestamp.valueOf("2025-01-01 11:00:00"));
-        request.setAppointmentAddress("456 Main St");
-
-        HearingReadDTO response = new HearingReadDTO();
-        response.setHearingId(hearingId);
-        response.setDateTime(Timestamp.valueOf("2025-01-01 11:00:00"));
-        response.setAppointmentAddress("456 Main St");
-
-        Mockito.when(hearingService.updateHearingById(eq(hearingId), any(HearingUpdateDTO.class))).thenReturn(Optional.of(response));
-
-        mockMvc.perform(put("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/hearings/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.hearingId").value(1))
-                .andExpect(jsonPath("$.appointmentAddress").value("456 Main St"))
-                .andExpect(jsonPath("$.dateTime").value("2025-01-01T09:00:00.000+00:00"));
-
-        Mockito.verify(hearingService, times(1)).updateHearingById(eq(hearingId), any(HearingUpdateDTO.class));
+                .andExpect(view().name("notFoundException"));
     }
 
     @Test
-    void testUpdateHearing_notFound() throws Exception {
-        int hearingId = 1;
+    void testGetAllHearings_returnsHearingsView() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
 
-        HearingUpdateDTO request = new HearingUpdateDTO();
-        request.setDateTime(Timestamp.valueOf("2025-01-01 11:00:00"));
-        request.setAppointmentAddress("456 Main St");
+        LawsuitReadDTO lawsuitReadDTO = new LawsuitReadDTO();
+        lawsuitReadDTO.setLawsuitId(1);
+        lawsuitReadDTO.setReason("12345");
+        dto.setLawsuit(lawsuitReadDTO);
 
-        Mockito.when(hearingService.updateHearingById(eq(hearingId), any(HearingUpdateDTO.class))).thenReturn(Optional.empty());
+        Page<HearingReadDTO> page = new PageImpl<>(List.of(dto));
 
-        mockMvc.perform(put("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isNotFound());
+        Mockito.when(hearingService.getHearingsPage(0, "hearingId", "asc")).thenReturn(page);
 
-        Mockito.verify(hearingService, times(1)).updateHearingById(eq(hearingId), any(HearingUpdateDTO.class));
+        mockMvc.perform(get("/hearings"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hearing/hearings"))
+                .andExpect(model().attribute("hearings", page))
+                .andExpect(model().attribute("sortField", "hearingId"))
+                .andExpect(model().attribute("sortOrder", "asc"));
     }
 
     @Test
-    void testDeleteHearing_success() throws Exception {
-        int hearingId = 1;
+    void testGetEditHearingForm_found_returnsFormView() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
 
-        Mockito.doNothing().when(hearingService).deleteHearingById(hearingId);
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.of(dto));
 
-        mockMvc.perform(delete("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        Mockito.verify(hearingService, times(1)).deleteHearingById(hearingId);
+        mockMvc.perform(get("/hearings/edit/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hearing/form"))
+                .andExpect(model().attribute("hearing", dto))
+                .andExpect(model().attribute("formAction", "/hearings/1"));
     }
 
     @Test
-    void testDeleteHearing_notFound() throws Exception {
-        int hearingId = 1;
+    void testGetEditHearingForm_notFound_throwsException() throws Exception {
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.empty());
 
-        Mockito.doThrow(new RuntimeException("Hearing not found")).when(hearingService).deleteHearingById(hearingId);
+        mockMvc.perform(get("/hearings/edit/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("notFoundException"));
+    }
 
-        mockMvc.perform(delete("/hearings/{hearingId}", hearingId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+    @Test
+    void testUpdateHearing_successRedirects() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
 
-        Mockito.verify(hearingService, times(1)).deleteHearingById(hearingId);
+        Mockito.when(hearingService.updateHearingById(eq(1), any(HearingUpdateDTO.class)))
+                .thenReturn(Optional.of(dto));
+
+        mockMvc.perform(post("/hearings/1")
+                        .param("dateTime", "2023-01-01T12:00")
+                        .param("appointmentAddress", "Courtroom A"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/hearings/1"))
+                .andExpect(redirectedUrl("/hearings/1"));
+    }
+
+    @Test
+    void testUpdateHearing_validationError() throws Exception {
+        mockMvc.perform(post("/hearings/1")
+                        .param("appointmentAddress", "Courtroom A"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hearing/form"))
+                .andExpect(model().attribute("formAction", "/hearings/1"));
+    }
+
+    @Test
+    void testUpdateHearing_notFound_throwsException() throws Exception {
+        Mockito.when(hearingService.updateHearingById(eq(1), any(HearingUpdateDTO.class)))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/hearings/1")
+                        .param("dateTime", "2023-01-01T12:00")
+                        .param("appointmentAddress", "Courtroom A"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("notFoundException"));
+    }
+
+    @Test
+    void testDeleteHearing_successRedirects() throws Exception {
+        HearingReadDTO dto = new HearingReadDTO();
+        dto.setHearingId(1);
+
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.of(dto));
+
+        mockMvc.perform(post("/hearings/delete/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hearings"));
+
+        Mockito.verify(hearingService).deleteHearingById(1);
+    }
+
+    @Test
+    void testDeleteHearing_notFound_throwsException() throws Exception {
+        Mockito.when(hearingService.getHearingById(1)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/hearings/delete/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("notFoundException"));
     }
 }

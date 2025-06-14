@@ -5,6 +5,7 @@ import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitCreateDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitReadDTO;
 import ord.example.LegalManagementSystem.dtos.Lawsuit.LawsuitUpdateDTO;
 import ord.example.LegalManagementSystem.exceptions.ClientNotFoundException;
+import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
 import ord.example.LegalManagementSystem.exceptions.LawyerNotFoundException;
 import ord.example.LegalManagementSystem.mappers.GlobalMapper;
 import ord.example.LegalManagementSystem.model.Lawsuit;
@@ -15,6 +16,7 @@ import ord.example.LegalManagementSystem.repository.LawsuitRepository;
 import ord.example.LegalManagementSystem.repository.ClientRepository;
 import ord.example.LegalManagementSystem.repository.LawyerLawsuitRepository;
 import ord.example.LegalManagementSystem.repository.LawyerRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -159,5 +161,20 @@ public class LawsuitService {
 
     public void deleteLawsuitById(Integer lawsuitId) {
         lawsuitRepository.deleteById(lawsuitId);
+    }
+
+    @Cacheable(value = "lawsuitPdf", key = "#lawsuitId")
+    public byte[] getPdfData(Integer lawsuitId) {
+        Optional<LawsuitReadDTO> lawsuitOptional = this.getLawsuitById(lawsuitId);
+        if (lawsuitOptional.isEmpty()) {
+            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
+        }
+
+        byte[] pdfData = lawsuitOptional.get().getLawsuitData();
+        if (pdfData == null || pdfData.length == 0) {
+            throw new LawsuitNotFoundException("Lawsuit data for lawsuit with ID " + lawsuitId + " not found");
+        }
+
+        return pdfData;
     }
 }

@@ -9,7 +9,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "lawyer")
 @Getter
 @Setter
 public class Lawyer {

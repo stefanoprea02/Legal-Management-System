@@ -1,5 +1,5 @@
 -- LAWYERS
-INSERT INTO Lawyer (first_name, last_name, hire_date, lawyer_type, hourly_rate, commission, lawyer_address) VALUES
+INSERT INTO lawyer (first_name, last_name, hire_date, lawyer_type, hourly_rate, commission, lawyer_address) VALUES
                                                                                                                 ('John', 'Smith', '2015-06-15', 'Criminal', 300, 0.05, '123 Court St, New York, NY'),
                                                                                                                 ('Alice', 'Wright', '2018-03-22', 'Civil', 250, 0.04, '456 Main St, Los Angeles, CA'),
                                                                                                                 ('Mark', 'Johnson', '2020-01-05', 'Corporate', 400, 0.06, '789 Elm St, Chicago, IL'),
@@ -13,7 +13,7 @@ INSERT INTO Lawyer (first_name, last_name, hire_date, lawyer_type, hourly_rate, 
                                                                                                                 ('Greg', 'Taylor', '2010-08-15', 'Criminal', 320, 0.05, '111 Pineapple St, Tampa, FL');
 
 -- CLIENTS
-INSERT INTO Client (first_name, last_name, client_address) VALUES
+INSERT INTO client (first_name, last_name, client_address) VALUES
                                                                ('David', 'Anderson', '101 First St, Austin, TX'),
                                                                ('Rachel', 'Bennett', '202 Second St, San Diego, CA'),
                                                                ('George', 'Clark', '303 Third St, Phoenix, AZ'),
@@ -27,7 +27,7 @@ INSERT INTO Client (first_name, last_name, client_address) VALUES
                                                                ('Peter', 'Knight', '222 Eleventh St, Salt Lake City, UT');
 
 -- INVOICES
-INSERT INTO Invoice (client_id, amount, due_date) VALUES
+INSERT INTO invoice (client_id, amount, due_date) VALUES
                                                       (1, 1200, '2025-06-01'),
                                                       (2, 1800, '2025-06-10'),
                                                       (3, 950, '2025-06-15'),
@@ -57,7 +57,7 @@ INSERT INTO Invoice (client_id, amount, due_date) VALUES
                                                       (5, 1200, '2025-12-25');
 
 -- LAWSUITS
-INSERT INTO Lawsuit (client_id, reason, opposing_party) VALUES
+INSERT INTO lawsuit (client_id, reason, opposing_party) VALUES
                                                             (1, 'Breach of Contract', 'ABC Corp'),
                                                             (2, 'Divorce Settlement', 'John Bennett'),
                                                             (3, 'Fraud Allegation', 'XYZ Inc.'),
@@ -71,7 +71,7 @@ INSERT INTO Lawsuit (client_id, reason, opposing_party) VALUES
                                                             (11, 'Defamation', 'Media House');
 
 -- HEARINGS
-INSERT INTO Hearing (lawsuit_id, date_time, appointment_address) VALUES
+INSERT INTO hearing (lawsuit_id, date_time, appointment_address) VALUES
                                                                      (1, '2025-06-20 10:00:00', 'Courtroom 101, NY'),
                                                                      (2, '2025-06-25 11:00:00', 'Courtroom 12, CA'),
                                                                      (3, '2025-07-05 09:30:00', 'Courtroom B, IL'),
@@ -85,7 +85,7 @@ INSERT INTO Hearing (lawsuit_id, date_time, appointment_address) VALUES
                                                                      (11, '2025-08-10 16:00:00', 'Courtroom Q, FL');
 
 -- LAWYER_LAWSUIT
-INSERT INTO Lawyer_Lawsuit (lawyer_id, lawsuit_id, hours_worked) VALUES
+INSERT INTO lawyer_lawsuit (lawyer_id, lawsuit_id, hours_worked) VALUES
                                                                      (1, 1, 10),
                                                                      (2, 2, 15),
                                                                      (3, 3, 12),

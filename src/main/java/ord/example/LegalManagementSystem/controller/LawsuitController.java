@@ -10,6 +10,7 @@ import ord.example.LegalManagementSystem.exceptions.LawsuitNotFoundException;
 import ord.example.LegalManagementSystem.service.ClientService;
 import ord.example.LegalManagementSystem.service.LawsuitService;
 import ord.example.LegalManagementSystem.service.LawyerService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -85,19 +86,7 @@ public class LawsuitController {
 
     @GetMapping("/download/{lawsuitId}")
     public ResponseEntity<ByteArrayResource> downloadLawsuitPdf(@PathVariable Integer lawsuitId) {
-        Optional<LawsuitReadDTO> lawsuitOptional = lawsuitService.getLawsuitById(lawsuitId);
-
-        if (lawsuitOptional.isEmpty()) {
-            throw new LawsuitNotFoundException("Lawsuit with ID " + lawsuitId + " not found");
-        }
-
-        LawsuitReadDTO lawsuit = lawsuitOptional.get();
-
-        byte[] pdfData = lawsuit.getLawsuitData();
-        if (pdfData == null || pdfData.length == 0) {
-            throw new LawsuitNotFoundException("Lawsuit data for lawsuit with ID " + lawsuitId + " not found");
-        }
-
+        byte[] pdfData = lawsuitService.getPdfData(lawsuitId);
         ByteArrayResource resource = new ByteArrayResource(pdfData);
 
         return ResponseEntity.ok()

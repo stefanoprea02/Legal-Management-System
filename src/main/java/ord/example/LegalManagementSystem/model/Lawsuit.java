@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "lawsuit")
 @Getter
 @Setter
 public class Lawsuit {
@@ -29,6 +29,8 @@ public class Lawsuit {
     @Size(max = 50)
     private String opposingParty;
 
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] lawsuitData;
 
     @OneToOne(mappedBy = "lawsuit", cascade = CascadeType.ALL)

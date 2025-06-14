@@ -21,7 +21,7 @@ CREATE TABLE user_authority(
                                PRIMARY KEY (user_id, authority_id)
 );
 
-CREATE TABLE Lawyer(
+CREATE TABLE lawyer(
                        lawyer_id INT AUTO_INCREMENT PRIMARY KEY,
                        first_name VARCHAR(20) NOT NULL,
                        last_name VARCHAR(20) NOT NULL,
@@ -32,43 +32,43 @@ CREATE TABLE Lawyer(
                        lawyer_address VARCHAR(100)
 );
 
-CREATE TABLE `Client`(
+CREATE TABLE `client`(
                          client_id INT AUTO_INCREMENT PRIMARY KEY,
                          first_name VARCHAR(20) NOT NULL,
                          last_name VARCHAR(20) NOT NULL,
                          client_address VARCHAR(100)
 );
 
-CREATE TABLE Invoice(
+CREATE TABLE invoice(
                         invoice_id INT AUTO_INCREMENT PRIMARY KEY,
                         client_id INT,
                         amount INT,
                         due_date DATE,
-                        FOREIGN KEY(client_id) REFERENCES `Client`(client_id)
+                        FOREIGN KEY(client_id) REFERENCES `client`(client_id)
 );
 
-CREATE TABLE Lawsuit(
+CREATE TABLE lawsuit(
                         lawsuit_id INT AUTO_INCREMENT PRIMARY KEY,
                         client_id INT NOT NULL,
                         reason VARCHAR(50) NOT NULL,
                         opposing_party VARCHAR(50) NOT NULL,
-                        lawsuit_data BLOB,
-                        FOREIGN KEY(client_id) REFERENCES `Client`(client_id)
+                        lawsuit_data MEDIUMBLOB,
+                        FOREIGN KEY(client_id) REFERENCES `client`(client_id)
 );
 
-CREATE TABLE Hearing(
+CREATE TABLE hearing(
                         hearing_id INT AUTO_INCREMENT PRIMARY KEY,
                         lawsuit_id INT,
                         date_time TIMESTAMP,
                         appointment_address VARCHAR(100),
-                        FOREIGN KEY(lawsuit_id) REFERENCES Lawsuit(lawsuit_id)
+                        FOREIGN KEY(lawsuit_id) REFERENCES lawsuit(lawsuit_id)
 );
 
-CREATE TABLE Lawyer_Lawsuit(
+CREATE TABLE lawyer_lawsuit(
                                id INT AUTO_INCREMENT PRIMARY KEY,
                                lawyer_id INT,
                                lawsuit_id INT,
                                hours_worked INT,
-                               FOREIGN KEY(lawyer_id) REFERENCES Lawyer(lawyer_id),
-                               FOREIGN KEY(lawsuit_id) REFERENCES Lawsuit(lawsuit_id)
+                               FOREIGN KEY(lawyer_id) REFERENCES lawyer(lawyer_id),
+                               FOREIGN KEY(lawsuit_id) REFERENCES lawsuit(lawsuit_id)
 );

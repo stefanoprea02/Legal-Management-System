@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.sql.Date;
 
 @Entity
-@Table
+@Table(name = "invoice")
 @Getter
 @Setter
 public class Invoice {

@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 
 @Entity
-@Table
+@Table(name = "hearing")
 @Getter
 @Setter
 public class Hearing {
